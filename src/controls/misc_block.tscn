@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://bp7sy4fyjgjj1"]
+
+[ext_resource type="Script" uid="uid://bnfcrh1g7w4" path="res://controls/misc_block.gd" id="1_3ypwv"]
+
+[node name="RootBlock" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_3ypwv")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Character backstory"
+
+[node name="Open" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "O"
+
+[node name="Main" type="VBoxContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Open" to="." method="_on_open_pressed"]

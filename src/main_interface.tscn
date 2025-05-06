@@ -1,0 +1,159 @@
+[gd_scene load_steps=5 format=3 uid="uid://cw0s0cjc5g3vs"]
+
+[ext_resource type="Script" uid="uid://buqpj43eend46" path="res://main_interface.gd" id="1_3wdv7"]
+[ext_resource type="Theme" uid="uid://cwdo01ubsxv0l" path="res://theme.tres" id="1_v57av"]
+[ext_resource type="PackedScene" uid="uid://dvj16bw73cbsn" path="res://chapter/chapter.tscn" id="3_rhs15"]
+[ext_resource type="PackedScene" uid="uid://bd63yugebxlpt" path="res://controls/character_editor.tscn" id="4_p4uil"]
+
+[node name="MainInterface" type="HSplitContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_v57av")
+script = ExtResource("1_3wdv7")
+
+[node name="MainWindow" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(650, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainWindow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TitleEdit" type="LineEdit" parent="MainWindow/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Title of the story (optional)"
+
+[node name="ScenarioEdit" type="TextEdit" parent="MainWindow/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 3
+tooltip_text = "The base scenario (keep it short)"
+placeholder_text = "Base background for the story / scenario"
+wrap_mode = 1
+
+[node name="Chapters" type="TabContainer" parent="MainWindow/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 450)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+current_tab = 0
+
+[node name="Ch_1" parent="MainWindow/VBoxContainer/Chapters" instance=ExtResource("3_rhs15")]
+layout_mode = 2
+chapterName = "Ch 1"
+
+[node name="ChatInputSpace" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ChatInput" type="TextEdit" parent="MainWindow/VBoxContainer/ChatInputSpace"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Type in the next paragraph"
+
+[node name="ChatConfirm" type="VBoxContainer" parent="MainWindow/VBoxContainer/ChatInputSpace"]
+layout_mode = 2
+
+[node name="ChatWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 1
+popup/item_0/text = "Narration"
+popup/item_0/id = 0
+
+[node name="ChatSend" type="Button" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Send the text in the texbox directly without modification"
+text = "Send"
+
+[node name="GenerateText" type="ScrollContainer" parent="MainWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 0
+
+[node name="CharacterButtons" type="HFlowContainer" parent="MainWindow/VBoxContainer/GenerateText"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GenerateByText" type="CheckButton" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Use the above text"
+
+[node name="NarrationButton" type="Button" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add narration"
+
+[node name="ContextEdit" type="TextEdit" parent="MainWindow/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Additional context that the LLM should consider"
+
+[node name="AdditionalButtons" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+layout_mode = 2
+
+[node name="LoadButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load scenario"
+
+[node name="SaveButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
+layout_mode = 2
+text = "Save scenario"
+
+[node name="BackButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
+layout_mode = 2
+text = "Go back to change model"
+
+[node name="Supplementary" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Supplementary"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Supplementary/VBoxContainer"]
+layout_mode = 2
+text = "Controls"
+horizontal_alignment = 1
+
+[node name="MiscTools" type="VBoxContainer" parent="Supplementary/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CharacterEditor" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_p4uil")]
+layout_mode = 2
+
+[connection signal="text_changed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatInput" to="." method="_on_chat_input_text_changed"]
+[connection signal="pressed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm/ChatSend" to="." method="_on_chat_send_pressed"]
+[connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/LoadButton" to="." method="_on_load_button_pressed"]
+[connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="characterChange" from="Supplementary/VBoxContainer/MiscTools/CharacterEditor" to="." method="_on_character_editor_character_change"]
+[connection signal="selectionChange" from="Supplementary/VBoxContainer/MiscTools/CharacterEditor" to="." method="_on_openCharacterStory"]
