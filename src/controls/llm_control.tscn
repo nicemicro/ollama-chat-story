@@ -1,0 +1,127 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdk7vsj3oiiyr"]
+
+[ext_resource type="PackedScene" uid="uid://bp7sy4fyjgjj1" path="res://controls/misc_block.tscn" id="1_fvols"]
+[ext_resource type="Script" uid="uid://bufprvc2ktdc4" path="res://controls/llm_control.gd" id="2_ah6jq"]
+[ext_resource type="PackedScene" uid="uid://b1rkmrq24fmgw" path="res://http/api-access.tscn" id="3_ah6jq"]
+
+[node name="LLMControl" instance=ExtResource("1_fvols")]
+script = ExtResource("2_ah6jq")
+
+[node name="Label" parent="VBoxContainer/HBoxContainer" index="0"]
+text = "LLM Control"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Main" index="0"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SubWindows" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Connections" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="0"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="0"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="1"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/HBoxContainer" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Connections"
+
+[node name="Open" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/HBoxContainer" index="1"]
+visible = false
+layout_mode = 2
+text = "O"
+
+[node name="Hide" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/HBoxContainer" index="2"]
+layout_mode = 2
+text = "__"
+
+[node name="OllamaUrl" type="LineEdit" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "localhost:11434"
+
+[node name="Connect" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="3"]
+layout_mode = 2
+text = "Connect to Ollama"
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="4"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Status: disconnected"
+
+[node name="SelectModel" type="OptionButton" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="5"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DirectMsgSend" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="1"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="0"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="1"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/HBoxContainer" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Send direct message"
+
+[node name="Open" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/HBoxContainer" index="1"]
+visible = false
+layout_mode = 2
+text = "O"
+
+[node name="Hide" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/HBoxContainer" index="2"]
+layout_mode = 2
+text = "__"
+
+[node name="DirectMsgText" type="TextEdit" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 3
+wrap_mode = 1
+
+[node name="DirectMsgSend" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="3"]
+layout_mode = 2
+text = "Send to LLM"
+
+[node name="LLMResponseList" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="2"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="0"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="1"]
+layout_mode = 2
+text = "LLM responses"
+
+[node name="LLMScroll" type="ScrollContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LLMResponses" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList/LLMScroll" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ApiAccess" parent="." index="1" instance=ExtResource("3_ah6jq")]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/Connect" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/DirectMsgSend" to="." method="_on_direct_msg_send_pressed"]
+[connection signal="chunkReceived" from="ApiAccess" to="." method="_on_api_access_chunk_received"]
+[connection signal="connectionSuccess" from="ApiAccess" to="." method="_on_api_access_connection_success"]
+[connection signal="unexpectedDisconnect" from="ApiAccess" to="." method="_on_api_access_unexpected_disconnect"]

@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://uu5r5a8j8gk"]
+
+[ext_resource type="PackedScene" uid="uid://bp7sy4fyjgjj1" path="res://controls/misc_block.tscn" id="1_y57ch"]
+[ext_resource type="Script" uid="uid://sirahpgomuvy" path="res://controls/placeholder.gd" id="2_1nagn"]
+
+[node name="Placeholder" instance=ExtResource("1_y57ch")]
+script = ExtResource("2_1nagn")
+
+[node name="HBoxContainer" parent="VBoxContainer" index="0"]
+visible = false
+
+[node name="Label" parent="VBoxContainer/HBoxContainer" index="0"]
+text = "placeholder"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Main" index="0"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="VBoxContainer/Main" index="1"]
+layout_mode = 2
+size_flags_vertical = 3

@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cw0s0cjc5g3vs"]
+[gd_scene load_steps=7 format=3 uid="uid://cw0s0cjc5g3vs"]
 
 [ext_resource type="Script" uid="uid://buqpj43eend46" path="res://main_interface.gd" id="1_3wdv7"]
 [ext_resource type="Theme" uid="uid://cwdo01ubsxv0l" path="res://theme.tres" id="1_v57av"]
 [ext_resource type="PackedScene" uid="uid://dvj16bw73cbsn" path="res://chapter/chapter.tscn" id="3_rhs15"]
+[ext_resource type="PackedScene" uid="uid://cdk7vsj3oiiyr" path="res://controls/llm_control.tscn" id="4_6mpp1"]
 [ext_resource type="PackedScene" uid="uid://bd63yugebxlpt" path="res://controls/character_editor.tscn" id="4_p4uil"]
+[ext_resource type="PackedScene" uid="uid://uu5r5a8j8gk" path="res://controls/placeholder.tscn" id="6_ckhiq"]
 
 [node name="MainInterface" type="HSplitContainer"]
 anchors_preset = 15
@@ -147,7 +149,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="LLMControl" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_6mpp1")]
+layout_mode = 2
+
 [node name="CharacterEditor" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_p4uil")]
+layout_mode = 2
+
+[node name="Placeholder" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("6_ckhiq")]
 layout_mode = 2
 
 [connection signal="text_changed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatInput" to="." method="_on_chat_input_text_changed"]
