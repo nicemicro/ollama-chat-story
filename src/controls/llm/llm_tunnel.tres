@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://ck7nrl05vgnpn"]
+
+[ext_resource type="Script" uid="uid://d076m0ahjycve" path="res://controls/llm/llm_tunnel.gd" id="1_kgn01"]
+
+[resource]
+resource_local_to_scene = true
+resource_name = "LlmTunnel"
+script = ExtResource("1_kgn01")

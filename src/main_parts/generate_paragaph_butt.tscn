@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnr5ulamhqxp4"]
+
+[ext_resource type="Script" uid="uid://xckc7cprvc4h" path="res://main_parts/generate_paragaph_butt.gd" id="1_lnouw"]
+
+[node name="GenerateParagraphButton" type="Button"]
+disabled = true
+text = "Add narration"
+script = ExtResource("1_lnouw")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://cw0s0cjc5g3vs"]
+[gd_scene load_steps=8 format=3 uid="uid://cw0s0cjc5g3vs"]
 
 [ext_resource type="Script" uid="uid://buqpj43eend46" path="res://main_interface.gd" id="1_3wdv7"]
-[ext_resource type="Theme" uid="uid://cwdo01ubsxv0l" path="res://theme.tres" id="1_v57av"]
+[ext_resource type="Theme" uid="uid://cwdo01ubsxv0l" path="res://theme/theme.tres" id="1_v57av"]
 [ext_resource type="PackedScene" uid="uid://dvj16bw73cbsn" path="res://chapter/chapter.tscn" id="3_rhs15"]
 [ext_resource type="PackedScene" uid="uid://cdk7vsj3oiiyr" path="res://controls/llm_control.tscn" id="4_6mpp1"]
 [ext_resource type="PackedScene" uid="uid://bd63yugebxlpt" path="res://controls/character_editor.tscn" id="4_p4uil"]
+[ext_resource type="PackedScene" uid="uid://bnr5ulamhqxp4" path="res://main_parts/generate_paragaph_butt.tscn" id="4_xxucj"]
 [ext_resource type="PackedScene" uid="uid://uu5r5a8j8gk" path="res://controls/placeholder.tscn" id="6_ckhiq"]
 
 [node name="MainInterface" type="HSplitContainer"]
@@ -63,7 +64,8 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Type in the next paragraph"
+placeholder_text = "Type in the next paragraph, or instructuions for generating the next paragraph"
+wrap_mode = 1
 
 [node name="ChatConfirm" type="VBoxContainer" parent="MainWindow/VBoxContainer/ChatInputSpace"]
 layout_mode = 2
@@ -99,10 +101,9 @@ layout_mode = 2
 button_pressed = true
 text = "Use the above text"
 
-[node name="NarrationButton" type="Button" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons"]
+[node name="NarrationButton" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons" groups=["llmButton"] instance=ExtResource("4_xxucj")]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Add narration"
 
 [node name="ContextEdit" type="TextEdit" parent="MainWindow/VBoxContainer"]
 unique_name_in_owner = true
@@ -122,10 +123,6 @@ text = "Load scenario"
 [node name="SaveButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
 layout_mode = 2
 text = "Save scenario"
-
-[node name="BackButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
-layout_mode = 2
-text = "Go back to change model"
 
 [node name="Supplementary" type="ScrollContainer" parent="."]
 custom_minimum_size = Vector2(250, 0)
@@ -150,6 +147,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="LLMControl" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_6mpp1")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="CharacterEditor" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_p4uil")]
@@ -158,10 +156,36 @@ layout_mode = 2
 [node name="Placeholder" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("6_ckhiq")]
 layout_mode = 2
 
+[node name="SaveDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+initial_position = 1
+size = Vector2i(680, 450)
+wrap_controls = false
+dialog_hide_on_ok = true
+access = 1
+filters = PackedStringArray("*.lc.json;LLM-chat JSON;text/json", "*json;JSON;text/json")
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+size = Vector2i(680, 450)
+wrap_controls = false
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 1
+filters = PackedStringArray("*.lc.json;LLM-chat JSON;text/json", "*json;JSON;text/json")
+
 [connection signal="text_changed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatInput" to="." method="_on_chat_input_text_changed"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm/ChatSend" to="." method="_on_chat_send_pressed"]
+[connection signal="buttonPressed" from="MainWindow/VBoxContainer/GenerateText/CharacterButtons/NarrationButton" to="." method="llmParagraphGenerate"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/LoadButton" to="." method="_on_load_button_pressed"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="connectionSevered" from="Supplementary/VBoxContainer/MiscTools/LLMControl" to="." method="_on_llm_control_connection_severed"]
+[connection signal="llmConnected" from="Supplementary/VBoxContainer/MiscTools/LLMControl" to="." method="_on_llm_control_llm_connected"]
 [connection signal="characterChange" from="Supplementary/VBoxContainer/MiscTools/CharacterEditor" to="." method="_on_character_editor_character_change"]
 [connection signal="selectionChange" from="Supplementary/VBoxContainer/MiscTools/CharacterEditor" to="." method="_on_openCharacterStory"]
+[connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]
+[connection signal="file_selected" from="LoadDialog" to="." method="_on_load_dialog_file_selected"]

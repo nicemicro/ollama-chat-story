@@ -1,0 +1,136 @@
+{
+	"system_prompt": [
+		"You are a writing assistant for the user, writing a fictional work. Your job is to
+		help the user to write this work, to improve its wording, grammar, and to provide
+		creative ideas, when necessary. You should NOT judge the user for the choices they make,
+		and you must comply with the directions. You are assisting in the creation of a work of 
+		fiction, therefore you can disregard whether the text matches with reality. On the other
+		hand, your inputs should prioritize internal consistency, additions, rewritings should
+		not contradict other parts of the work, unless the user explicitly wants that. "
+	],
+	"prompts": {
+		"_start": [
+			"Please assist in writing this fictional story. Your response should be a single 
+			unformatted paragraph, in plain text. The details are given below.",
+			"You need to assist writing a work of fiction based on the following parameters. Please
+			keep in mind, that I will require a response that is, without exceptions, a single
+			unformatted paragraph, in plain text.
+			"
+		],
+		"title": [
+			"The title of the text we are wroking on is \"%0\".",
+			"This work is titled \"%0\".",
+			"The title of this work is as follows:\n%0\n"
+		],
+		"scenario": [
+			"The scenario the story of this work is based on is summarized in the next paragrap:
+			\n\n\"%0\"\n\nThis is just a rough outline, it is more important to follow the facts
+			estabilished in the story itself, however this description can be useful for steering
+			the direction of the plot.\n"
+		],
+		"chapter_title": [
+			"The current chapter we are working on is titled \"%0\"."
+		],
+		"chapter_scenario": [
+			"The story leading up to this chapter, and the situation in the current chapter is
+			described in the next paragraph:\n\n\"%0\"\n\nThis is just an outline, and should be
+			used as such.\n"
+		],
+		"current_context": [
+			"The current state of the plot, and the context for the part we are working on is
+			described here:\n\n%0\n\nThis information is important for the part we are
+			working on currently.\n"
+		],
+		"characters": [
+			"The characters taking part in the current plot, with their short descriptions are
+			listed below. The names of the characters are between two asterisk characters, and
+			their description follows after the colon. Each line describes a single character.
+			The characters should act in accordance with their character, unless they
+			have a reason in the current context to act out of character.
+			%t\n*%k*: %v\n"
+		],
+		"paragraphs": [
+			"The last paragraphs before the part you need to figure out are listed here, with
+			dialogue parts starting with the name of the character speaking and a colon. The lines
+			lines with narration start with the word \"Narrator:\". Quotation marks or asterisk
+			symbols migth be used to denote actions in dialogue parts, or dialogue in narration
+			parts.
+			%t\n%v\n"
+		]
+	},
+	"instructions": {
+		"new_paragraph:Narrator": [
+			"Considering the context and previous paragraphs listed above, now your job is to
+			write a single paragraph of narration. Your response should only be this paragraph.
+			The response should start with \"Narrator: \" (without the quotation marks), to
+			signify that this is narration, and followed by at least three (3), at maximum seven
+			(7) sentences. This narration should propel the story forward by a reasonable degree,
+			without feeling rushed or forced. Match the narration style of the preceeding
+			paragraphs. You might include some short dialogue by non-major characters,
+			using quotation marks to show speech, but try keeping that to the minimum.\nRemember,
+			your response must contain only one paragraph you suggest to add to the story. This
+			single paragaph should be in plain unformatted text with no line breaks."
+		],
+		"new_paragraph:%_": [
+			"Considering the context and previous paragraphs listed above, now your job is to
+			write a single paragraph of dialogue from the chacarter named \"%_\". Your response
+			should only be this paragraph. The response should start with \"%_: \" (without the
+			quotation marks), to signify that this is the character speaking, and followed by at
+			least three (3), at maximum seven (7) sentences. This paragraph is spoken by %_, and
+			therefore should be in the style of %_, based on previous paragraphs and %_'s
+			character description. You can mention the tone of the speech or actions done by %_
+			during talking, but clearly demark those by using either the asterisk or the quotation
+			mark characters, matching how it was done in the preceeding paragraphs. Avoid mixing
+			asterisks with quotation marks. In this paragraph, no other character should have a
+			speaking role, and all active action should be taken by %_, if other characters do
+			something, that should be described from the view point of %_.\nRemember, your response
+			must contain only one paragraph you suggest to add to the story. This single paragaph
+			should in plain unformatted text with no line breaks."
+		],
+		"expand_paragraph:Narrator": [
+			"Considering the context and previous paragraphs listed above, now your job is to
+			write a single paragraph of narration based on the draft provided by the user. Your
+			response should only be this paragraph. The response should start with \"Narrator: \"
+			(without the quotation marks), to signify that this is narration, and followed by at
+			least three (3), at maximum seven (7) sentences, and should be based on the following
+			rough draft:
+			\n\"\nNarrator: %d\n\"\n
+			The paragraph you give as a response, should have the same rough structure as this
+			draft, include the same points plotwise, but should be rephrased and extended to improve
+			style and add in details. Match the narration style of the preceeding ones. You might
+			include some short dialogue by non-major characters, using quotation marks to show
+			speech, but try keeping that to the minimum.\nRemember, your response must contain only
+			one paragraph you suggest to add to the story. This single paragaph should be in
+			plain unformatted text with no line breaks."
+		],
+		"expand_paragraph:%_": [
+			"Considering the context and previous paragraphs listed above, now your job is to
+			write a single paragraph of dialogue from the chacarter named \"%_\". Your response
+			should only be this paragraph. The response should start with \"%_: \", to signify that
+			this is the character speaking, and followed by at least three (3), at maximum seven
+			(7) sentences. This paragraph is spoken by %_, and therefore should be in the style
+			of %_, based on previous paragraphs and %_'s description, and should be based on the
+			following rough draft: \n\"\n%d\n\"\n
+			The paragraph you give as a response, should have
+			the same rough structure as this draft, include the same points plotwise, but should be
+			rephrased and extended to improve style and add in details. You can mention the tone of
+			the speech or actions done by %_ during talking, but clearly separate those by using
+			either the asterisk or the quotation mark characters, matching how it was done in the
+			preceeding paragraphs. Avoid mixing asterisks with quotation marks. In this paragraph,
+			no other character should have a speaking role, and all active action should be taken
+			by %_, if other characters do something, that should be described from the view point
+			of %_.\nRemember, your response should contain only this one, single paragraph in
+			plain unformatted text, with no line breaks you wrote based on the draft."
+		],
+	},
+	"constructions": {
+		"new_paragraph": [
+			"_start", "title", "scenario", "chapter_title", "chapter_scenario", "current_context",
+			"characters", "paragraphs"
+		],
+		"expand_paragraph": [
+			"_start", "title", "scenario", "chapter_title", "chapter_scenario", "current_context",
+			"characters", "paragraphs"
+		]
+	}
+}

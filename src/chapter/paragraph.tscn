@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://d36fwifw63ias" path="res://chapter/paragraph.gd" id="1_wg5jr"]
 
 [node name="Paragraph" type="PanelContainer"]
+offset_right = 628.0
+offset_bottom = 66.0
 size_flags_horizontal = 0
 script = ExtResource("1_wg5jr")
 
@@ -15,38 +17,62 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="TextView" type="RichTextLabel" parent="HBoxContainer"]
+[node name="TextContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="TextView" type="RichTextLabel" parent="HBoxContainer/TextContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(550, 0)
 layout_mode = 2
+size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
+horizontal_alignment = 3
+vertical_alignment = 1
+justification_flags = 35
 
-[node name="TextEdit" type="TextEdit" parent="HBoxContainer"]
+[node name="TextEdit" type="TextEdit" parent="HBoxContainer/TextContainer"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(550, 0)
+custom_minimum_size = Vector2(570, 0)
 layout_mode = 2
+size_flags_vertical = 3
 wrap_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="ResponseWaitLab" type="Label" parent="HBoxContainer/TextContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "(Waiting for response)"
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="HBoxContainer/TextContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+show_percentage = false
+indeterminate = true
+editor_preview_indeterminate = false
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 
-[node name="Selection" type="CheckBox" parent="HBoxContainer/VBoxContainer"]
+[node name="Selection" type="CheckBox" parent="HBoxContainer/ButtonsContainer"]
 layout_mode = 2
 text = "Select"
 
-[node name="EditButton" type="Button" parent="HBoxContainer/VBoxContainer"]
+[node name="EditButton" type="Button" parent="HBoxContainer/ButtonsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Edit"
 
-[node name="DoneButton" type="Button" parent="HBoxContainer/VBoxContainer"]
+[node name="DoneButton" type="Button" parent="HBoxContainer/ButtonsContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "Change"
 
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/EditButton" to="." method="_on_edit_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/DoneButton" to="." method="_on_done_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonsContainer/EditButton" to="." method="_on_edit_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonsContainer/DoneButton" to="." method="_on_done_button_pressed"]

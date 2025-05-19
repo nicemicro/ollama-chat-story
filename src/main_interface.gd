@@ -1,18 +1,19 @@
 extends HSplitContainer
 
-const chapterSceneUID: = "uid://dvj16bw73cbsn"
+const chapterSceneUID = "uid://dvj16bw73cbsn"
+const generateButtonUID = "uid://bnr5ulamhqxp4"
 
 var model: String = ""
 var miscTools: Dictionary = {}
-
 var characters: Dictionary = {}
-
-signal goBack
+var _narratorColor: Color = Color(0.1, 0.1, 0.1)
 
 func _ready():
 	for child in %MiscTools.get_children():
 		child.mainOpened.connect(_onMiscToolOpened)
 		miscTools[child.blockName] = child
+	for node in get_tree().get_nodes_in_group("llmButton"):
+		node.disabled = true
 	%Chapters.set_tab_title(0, %Chapters.get_child(0).chapterName)
 	connectChapterSignals(%Chapters.get_child(0))
 	miscTools["CharacterEditor"].addChapter(%Chapters.get_child(0).chapterName)
@@ -32,10 +33,6 @@ func _input(event):
 		if event is InputEventKey and event.is_pressed():
 			if event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER:
 				sendChatMessage()
-
-func connectionSevered():
-	%ChatSend.disabled = true
-	%NarrationButton.disabled = true
 
 func _onMiscToolOpened(node: Control):
 	for child in %MiscTools.get_children():
@@ -59,7 +56,7 @@ func sendChatMessage():
 		return
 	var activeChapter = %Chapters.get_current_tab_control()
 	newText = newText.replace("\n", " ").rstrip(" ")
-	var textColor: Color = Color(0.1, 0.1, 0.1)
+	var textColor: Color = _narratorColor
 	var characterId: int = %ChatWho.selected
 	var characterName: String = "Narrator"
 	if characterId != 0:
@@ -70,8 +67,46 @@ func sendChatMessage():
 	%ChatInput.text = ""
 	%LoadButton.disabled = true
 
-func _on_back_button_pressed():
-	goBack.emit()
+func llmParagraphGenerate(characterName: String):
+	var chapterNode = %Chapters.get_current_tab_control()
+	var dataPackage: Dictionary
+	var draft: String = ""
+	var prompt: String
+	var instruction: String = "new_paragraph"
+	if len(%TitleEdit.text) > 0:
+		dataPackage["title"] = %TitleEdit.text
+	if len(%ScenarioEdit.text) > 0:
+		dataPackage["scenario"] = %ScenarioEdit.text.replace("\n", " ")
+	if len(chapterNode.getChapterTitle()) > 0:
+		dataPackage["chapter_title"] = chapterNode.getChapterTitle()
+	if len(chapterNode.getChapterBackground()) > 0:
+		dataPackage["chapter_scenario"] = (
+			chapterNode.getChapterBackground().replace("\n", " ")
+		)
+	if len(%ContextEdit.text) > 0:
+		dataPackage["current_context"] = %ContextEdit.text.replace("\n", " ")
+	if %GenerateByText.button_pressed and len(%ChatInput.text) > 0:
+		draft = %ChatInput.text.replace("\n", " ")
+		instruction = "expand_paragraph"
+	var chapterName = chapterNode.chapterName
+	for characterButton in get_tree().get_nodes_in_group("characterButton"):
+		if characterButton.visible:
+			var suppCharName: String = characterButton.text
+			if "characters" not in dataPackage:
+				dataPackage["characters"] = {}
+			dataPackage["characters"][suppCharName] = (
+				characters[suppCharName]["chapters"][chapterName]
+			)
+	dataPackage["paragraphs"] = chapterNode.getParagraphs()
+	instruction += ":" + characterName
+	prompt = %LLMControl.generatePrompt(draft, dataPackage, instruction)
+	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
+		"generate", prompt
+	)
+	var color: Color = _narratorColor
+	if characterName in characters:
+		color = characters[characterName]["color"]
+	chapterNode.addOllamaPragr(tunnel, characterName, color)
 
 func on_chapterTitleChange(newTitle, object):
 	var idx: int = %Chapters.get_tab_idx_from_control(object)
@@ -91,10 +126,10 @@ func _on_openCharacterStory(character, chapter):
 		}
 	)
 
-func _on_addCharacter(character, chapter):
+func _on_addCharacter(character: String, chapter: String):
 	_addCharacter(character, chapter)
 
-func _addCharacter(character, chapter):
+func _addCharacter(character: String, chapter: String, description: String = ""):
 	if character in characters:
 		assert(chapter not in characters[character]["chapters"])
 	else:
@@ -104,22 +139,29 @@ func _addCharacter(character, chapter):
 		characters[character] = {"color": newColor}
 		for child in %Chapters.get_children():
 			child.changeCharacterColor(character, newColor)
-	characters[character]["chapters"] = {chapter: ""}
+	characters[character]["chapters"] = {chapter: description}
 	miscTools["CharacterEditor"].addCharacter(character, chapter)
 	%LoadButton.disabled = true
-	if %Chapters.get_current_tab_control().chapterName == chapter:
-		var newGenerateButton: Button = Button.new()
-		newGenerateButton.text = character
-		%CharacterButtons.add_child(newGenerateButton)
-		%ChatWho.add_item(character)
+	if %Chapters.get_current_tab_control().chapterName != chapter:
+		return
+	var packedScene = preload(generateButtonUID)
+	var newGenerateButton = packedScene.instantiate()
+	newGenerateButton.text = character
+	newGenerateButton.add_to_group("llmButton")
+	newGenerateButton.add_to_group("characterButton")
+	newGenerateButton.buttonPressed.connect(llmParagraphGenerate)
+	if %LLMControl.isLlmConnected():
+		newGenerateButton.disabled = false
+	else:
+		newGenerateButton.disabled = true
+	%CharacterButtons.add_child(newGenerateButton)
+	%ChatWho.add_item(character)
 
 func _on_hideCharacter(character: String):
 	var selectedIndex: int = %ChatWho.get_item_id(%ChatWho.get_selected_id())
-	for child in %CharacterButtons.get_children():
-		if child == %GenerateByText or child == %NarrationButton:
-			continue
-		if child.text == character:
-			child.hide()
+	for characterButton in get_tree().get_nodes_in_group("characterButton"):
+		if characterButton.text == character:
+			characterButton.hide()
 			break
 	for index in range(%ChatWho.item_count):
 		if %ChatWho.get_item_text(index) == character:
@@ -134,16 +176,14 @@ func _on_unhideCharacter(character: String):
 	var adjust: int = 1
 	%ChatWho.clear()
 	%ChatWho.add_item("Narrator")
-	for child in %CharacterButtons.get_children():
-		if child == %GenerateByText or child == %NarrationButton:
-			continue
-		if child.text == character:
-			child.show()
+	for characterButton in get_tree().get_nodes_in_group("characterButton"):
+		if characterButton.text == character:
+			characterButton.show()
 			adjust = 0 #if the unhidden character comes up first, it will be turned to +1 later
-		if child.text == selectedText:
+		if characterButton.text == selectedText:
 			adjust = 1 #if the selected character comes up first, it will be zeroed later
-		if child.visible:
-			%ChatWho.add_item(child.text)
+		if characterButton.visible:
+			%ChatWho.add_item(characterButton.text)
 	%ChatWho.select(selectedIndex + adjust)
 
 func _on_paragraphCharacter(characterName, chapter):
@@ -166,13 +206,27 @@ func _on_character_editor_character_change(text, newColor, character, chapter):
 	for child in %Chapters.get_children():
 		child.changeCharacterColor(character, newColor)
 
+func _on_llm_control_connection_severed():
+	for node in get_tree().get_nodes_in_group("llmButton"):
+		node.disabled = true
+
+func _on_llm_control_llm_connected():
+	for node in get_tree().get_nodes_in_group("llmButton"):
+		node.disabled = false
+
 func _on_save_button_pressed():
-	saveScenario()
+	%SaveDialog.show()
+
+func _on_save_dialog_file_selected(path):
+	saveScenario(path)
 
 func _on_load_button_pressed():
-	loadScenario()
+	%LoadDialog.show()
 
-func saveScenario():
+func _on_load_dialog_file_selected(path):
+	loadScenario(path)
+
+func saveScenario(fileName: String):
 	var scenarioData: Dictionary = {}
 	scenarioData["Title"] = %TitleEdit.text
 	scenarioData["Outline"] = %ScenarioEdit.text
@@ -182,13 +236,11 @@ func saveScenario():
 		var chapterName = chapter.chapterName
 		scenarioData["ChapterData"][chapterName] = chapter.getAllData()
 	scenarioData["Context"] = %ContextEdit.text
-	var fileName: String = "user://scenario.json"
 	var fileSave = FileAccess.open(fileName, FileAccess.WRITE)
 	fileSave.store_line(JSON.stringify(scenarioData, "\t"))
 	fileSave.close()
 
-func loadScenario():
-	var fileName: String = "user://scenario.json"
+func loadScenario(fileName: String):
 	if not FileAccess.file_exists(fileName):
 		return
 	var file = FileAccess.open(fileName, FileAccess.READ)
@@ -251,8 +303,9 @@ func loadScenario():
 			}
 			if "chapters" in characterData:
 				for chapterName in characterData["chapters"]:
-					_addCharacter(characterName, chapterName)
-					characters[characterName]["chapters"][chapterName] = (
+					_addCharacter(
+						characterName,
+						chapterName,
 						characterData["chapters"][chapterName]
 					)
 			if characterName in chapterCharacterMatrix:

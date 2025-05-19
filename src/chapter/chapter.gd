@@ -4,6 +4,7 @@ const paragraphSceneUID = "uid://dklx1tdfmq6cb"
 const characterNameSceneUID = "uid://xss4d30ho6ir"
 
 @export var chapterName: String = ""
+var _tunnel: LlmTunnel = null
 
 signal chapterTitleChange(chapterTitle, chapterObject)
 signal openCharacterStory(characterName, chapterName)
@@ -24,20 +25,61 @@ func setBulkProperties(
 	%ChapterBackground.text = newBackground
 	bulkAddParagraphs(allParagraphs)
 
+func getChapterTitle() -> String:
+	return %ChapterTitle.text
+
+func getChapterBackground() -> String:
+	return %ChapterBackground.text
+
+func getParagraphs(maxlength: int = 10000) -> Array:
+	var paragrList: Array = []
+	var parindex: int = %StoryParagraphs.get_child_count()
+	var length: int = 0
+	while length < maxlength and parindex > 0:
+		parindex -= 1
+		var paragraphNode = %StoryParagraphs.get_child(parindex)
+		paragrList.push_front(paragraphNode.paragrText.replace("\n", " "))
+	return paragrList
+
+func addOllamaPragr(tunnel: LlmTunnel, characterName: String, color: Color, where: int = -1):
+	assert(_tunnel == null)
+	var packedScene = preload(paragraphSceneUID)
+	var newParagraph = packedScene.instantiate()
+	var idealSize: int = max(int(%StoryParagraphs.size.y * 0.8), 510)
+	newParagraph.characterChanged.connect(paragraphCharacterChange)
+	_tunnel = tunnel
+	_tunnel.messageReceived.connect(_scrollBottomDeferred)
+	_tunnel.streamOver.connect(_removeTunnel)
+	newParagraph.setUpLlm(_tunnel, characterName, color, idealSize)
+	%StoryParagraphs.add_child(newParagraph)
+	if where == -1:
+		_scrollBottomDeferred()
+	else:
+		%StoryParagraphs.move_child(newParagraph, where)
+
+func _removeTunnel():
+	_tunnel.disconnectApi()
+	_tunnel = null
+
 func addParagraph(text: String, color: Color, where: int = -1):
 	var packedScene = preload(paragraphSceneUID)
 	var newParagraph = packedScene.instantiate()
-	newParagraph.setUp(text, color)
+	var idealSize: int = max(int(%StoryParagraphs.size.x * 0.8), 510)
+	newParagraph.setUp(text, color, idealSize)
 	newParagraph.characterChanged.connect(paragraphCharacterChange)
 	%StoryParagraphs.add_child(newParagraph)
 	if where == -1:
+		_scrollBottomDeferred()
+	else:
 		%StoryParagraphs.move_child(newParagraph, where)
-		call_deferred("scrollBottom")
 
 func scrollBottom():
 	%ScrollStory.set_deferred(
 		"scroll_vertical", %ScrollStory.get_v_scroll_bar().max_value
-		)
+	)
+
+func _scrollBottomDeferred(_a = null, _b = null, _c = null, _d = null):
+	call_deferred("scrollBottom")
 
 func addEmptyCharacter():
 	var packedScene = preload(characterNameSceneUID)
@@ -50,7 +92,7 @@ func addEmptyCharacter():
 	newCharacter.unhideName.connect(unhideCharacterBlock)
 	%Characters.add_child(newCharacter)
 
-func addFilledInCharater(characterName: String, newColor: Color, hidden: bool = false):
+func addFilledInCharater(characterName: String, newColor: Color, isHidden: bool = false):
 	var packedScene = preload(characterNameSceneUID)
 	var newCharacter = packedScene.instantiate()
 	newCharacter.deleteRequest.connect(delCharacter)
@@ -60,7 +102,7 @@ func addFilledInCharater(characterName: String, newColor: Color, hidden: bool = 
 	newCharacter.characterName = characterName
 	newCharacter.setColor(newColor)
 	newCharacter.finalize()
-	if hidden:
+	if isHidden:
 		newCharacter.setHidden()
 	%Characters.add_child(newCharacter)
 	%Characters.move_child(newCharacter, %Characters.get_child_count()-2)
@@ -133,3 +175,8 @@ func bulkAddParagraphs(paragraphList: Array):
 
 func _on_chapter_title_text_changed(new_text):
 	chapterTitleChange.emit(new_text, self)
+
+func _on_story_paragraphs_resized():
+	var idealSize: int = max(int(%StoryParagraphs.size.x * 0.8), 510)
+	for child in %StoryParagraphs.get_children():
+		child.setIdealSize(idealSize)

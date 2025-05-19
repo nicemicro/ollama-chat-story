@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://3yxmem2cp1i"]
+
+[ext_resource type="Script" uid="uid://buenb73xhpym5" path="res://controls/llm/prompt_gen.gd" id="1_hv163"]
+
+[node name="PromptGen" type="VBoxContainer"]
+script = ExtResource("1_hv163")

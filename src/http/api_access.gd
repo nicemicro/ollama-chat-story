@@ -41,6 +41,14 @@ func isBusy() -> bool:
 		_connectionStatus != STATUS.disconnected
 	)
 
+func isAvailable() -> bool:
+	return (
+		_connectionStatus == STATUS.connected or
+		_connectionStatus == STATUS.requestSending or
+		_connectionStatus == STATUS.responseReceiving or
+		_connectionStatus == STATUS.responseCollecting
+	)
+
 func _ready():
 	_http = HTTPClient.new() # Create the Client.
 	_connectionStatus = STATUS.ready
@@ -102,16 +110,15 @@ func _waitConnection() -> bool:
 
 func _statusRequest() -> bool:
 	_http.poll()
-	_http.get_status()
 	if _http.get_status() == HTTPClient.STATUS_REQUESTING:
-		print_debug("requesting...")
+		#print_debug("requesting...")
 		return true
 	if (
 		_http.get_status() == HTTPClient.STATUS_CONNECTED or
 		_http.get_status() == HTTPClient.STATUS_BODY
 	):
 		_connectionStatus = STATUS.responseReceiving
-		print_debug("requesting handled")
+		print_debug("request handled")
 		return true
 	return false
 
@@ -152,11 +159,11 @@ func sendRequest(path: String) -> bool:
 	if path.left(1) != "/":
 		path = "/" + path
 	# Some headers
-	var headers = [
+	var requestHeaders = [
 		"User-Agent: Pirulo/1.0 (Godot)",
 		"Accept: */*"
 	]
-	var err = _http.request(HTTPClient.METHOD_GET, path, headers)
+	var err = _http.request(HTTPClient.METHOD_GET, path, requestHeaders)
 	if (err == OK):
 		_connectionStatus = STATUS.requestSending
 		return true
@@ -175,8 +182,8 @@ func sendPostRequest(messageDict: Dictionary, path: String) -> bool:
 			#"prompt": "Report status. Say \"Status O.K.\" if you are ready to receive instructions"
 		#}
 	var json = JSON.stringify(messageDict)
-	var headers = ["Content-Type: application/json", "Content-Length: " + str(json.length())]
-	var err = _http.request(HTTPClient.METHOD_POST, path, headers, json)
+	var postHeaders = ["Content-Type: application/json", "Content-Length: " + str(json.length())]
+	var err = _http.request(HTTPClient.METHOD_POST, path, postHeaders, json)
 	if (err == OK):
 		_connectionStatus = STATUS.requestSending
 		return true

@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://4ddu1aktagwu"]
+
+[ext_resource type="Script" uid="uid://vch4quv222w3" path="res://controls/llm/title_bar.gd" id="1_58dot"]
+
+[node name="TitleBar" type="VBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 39.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("1_58dot")
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Title"
+
+[node name="Open" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "O"
+
+[node name="Hide" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "__"
+
+[connection signal="pressed" from="HBoxContainer/Open" to="." method="_on_open_pressed"]
+[connection signal="pressed" from="HBoxContainer/Hide" to="." method="_on_hide_pressed"]

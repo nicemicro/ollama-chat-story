@@ -59,3 +59,4 @@ size_flags_vertical = 3
 
 [connection signal="text_changed" from="ScrollContainer/List/ChapterTitle" to="." method="_on_chapter_title_text_changed"]
 [connection signal="pressed" from="ScrollContainer/List/Characters/ShowAllButton" to="." method="_on_show_all_button_pressed"]
+[connection signal="resized" from="ScrollContainer/List/ScrollStory/StoryParagraphs" to="." method="_on_story_paragraphs_resized"]
