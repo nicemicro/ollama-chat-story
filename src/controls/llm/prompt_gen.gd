@@ -57,6 +57,7 @@ func generatePrompt(draft: String, dataPackage: Dictionary, instruction: String)
 func _promptPartConstruct(promptTempl: String, dataPart) -> String:
 	var promptPart: String = ""
 	var repeating: String
+	var promptEnd: String = ""
 	if not dataPart is Array and not dataPart is Dictionary:
 		dataPart = [dataPart]
 	var index: int = 0
@@ -68,6 +69,7 @@ func _promptPartConstruct(promptTempl: String, dataPart) -> String:
 	if promptTempl.contains("%t"):
 		promptPart = promptTempl.get_slice("%t", 0)
 		repeating = promptTempl.get_slice("%t", 1)
+		promptEnd = promptTempl.get_slice("%t", 2)
 	else:
 		repeating = promptTempl
 	for data in dataPart:
@@ -78,4 +80,4 @@ func _promptPartConstruct(promptTempl: String, dataPart) -> String:
 			promptPart += (
 				repeating.replace("%k", data).replace("%v", value)
 			)
-	return promptPart
+	return promptPart + promptEnd

@@ -5,6 +5,7 @@ const characterNameSceneUID = "uid://xss4d30ho6ir"
 
 @export var chapterName: String = ""
 var _tunnel: LlmTunnel = null
+var _selectedParagrs: Array = []
 
 signal chapterTitleChange(chapterTitle, chapterObject)
 signal openCharacterStory(characterName, chapterName)
@@ -12,7 +13,8 @@ signal addCharacter(characterName, chapterName)
 signal deleteCharacter(characterName, chapterName)
 signal hideCharacter(character: String)
 signal unhideCharacter(character: String)
-signal paragraphCharacter(characterName, chapterName)
+signal paragrapAdded(paragraphNode)
+signal paragraphCharacter(characterName: String, chapterName: String)
 
 func _ready():
 	addEmptyCharacter()
@@ -31,9 +33,11 @@ func getChapterTitle() -> String:
 func getChapterBackground() -> String:
 	return %ChapterBackground.text
 
-func getParagraphs(maxlength: int = 10000) -> Array:
+func getParagraphs(startIndex: int = -1, maxlength: int = 10000) -> Array:
 	var paragrList: Array = []
-	var parindex: int = %StoryParagraphs.get_child_count()
+	var parindex: int = startIndex
+	if startIndex == -1:
+		parindex = %StoryParagraphs.get_child_count()
 	var length: int = 0
 	while length < maxlength and parindex > 0:
 		parindex -= 1
@@ -46,7 +50,7 @@ func addOllamaPragr(tunnel: LlmTunnel, characterName: String, color: Color, wher
 	var packedScene = preload(paragraphSceneUID)
 	var newParagraph = packedScene.instantiate()
 	var idealSize: int = max(int(%StoryParagraphs.size.y * 0.8), 510)
-	newParagraph.characterChanged.connect(paragraphCharacterChange)
+	_connectParagrSignals(newParagraph)
 	_tunnel = tunnel
 	_tunnel.messageReceived.connect(_scrollBottomDeferred)
 	_tunnel.streamOver.connect(_removeTunnel)
@@ -66,12 +70,27 @@ func addParagraph(text: String, color: Color, where: int = -1):
 	var newParagraph = packedScene.instantiate()
 	var idealSize: int = max(int(%StoryParagraphs.size.x * 0.8), 510)
 	newParagraph.setUp(text, color, idealSize)
-	newParagraph.characterChanged.connect(paragraphCharacterChange)
+	_connectParagrSignals(newParagraph)
 	%StoryParagraphs.add_child(newParagraph)
 	if where == -1:
 		_scrollBottomDeferred()
 	else:
 		%StoryParagraphs.move_child(newParagraph, where)
+
+func addParagraphAfter(paragrNode, text: String, after: bool):
+	var color: Color = paragrNode.bgColor
+	var add: int = 0
+	if after:
+		add = 1
+	addParagraph(text, color, paragrNode.get_index()+add)
+
+func _connectParagrSignals(paragraph):
+	paragraph.characterChanged.connect(paragraphCharacterChange)
+	paragraph.editStarted.connect(disableParagrEdits)
+	paragraph.editDone.connect(enableParagrEdits)
+	paragraph.selected.connect(paragrSelected)
+	paragraph.addNewParagraph.connect(addParagraphAfter)
+	paragrapAdded.emit(paragraph)
 
 func scrollBottom():
 	%ScrollStory.set_deferred(
@@ -148,6 +167,25 @@ func unhideCharacterBlock(object: Control):
 func paragraphCharacterChange(newName: String):
 	paragraphCharacter.emit(newName, chapterName)
 
+func disableParagrEdits(currentlyEdited: Control):
+	for child in %StoryParagraphs.get_children():
+		if child == currentlyEdited:
+			continue
+		child.setEditable(false)
+
+func enableParagrEdits(_currentlyEdited: Control):
+	for child in %StoryParagraphs.get_children():
+		child.setEditable(true)
+
+func paragrSelected(selectedParagr: Control, selected: bool):
+	if selected:
+		assert (not selectedParagr in _selectedParagrs)
+		_selectedParagrs.append(selectedParagr)
+	else:
+		assert (selectedParagr in _selectedParagrs)
+		_selectedParagrs.erase(selectedParagr)
+	%ParagraphOptions.visible = len(_selectedParagrs) > 0
+
 func _on_show_all_button_pressed():
 	for child in %Characters.get_children():
 		if child == %ShowAllButton:
@@ -180,3 +218,14 @@ func _on_story_paragraphs_resized():
 	var idealSize: int = max(int(%StoryParagraphs.size.x * 0.8), 510)
 	for child in %StoryParagraphs.get_children():
 		child.setIdealSize(idealSize)
+
+func _on_delete_paragraph_pressed():
+	%DeleteConfirm.show()
+
+func _on_delete_confirm_confirmed():
+	for child in %StoryParagraphs.get_children():
+		if child in _selectedParagrs:
+			%StoryParagraphs.remove_child(child)
+			_selectedParagrs.erase(child)
+	assert(len(_selectedParagrs) == 0)
+	%ParagraphOptions.visible = false

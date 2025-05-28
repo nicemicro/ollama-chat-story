@@ -108,11 +108,9 @@ func _sendChatToOllama(message: String, tunnel: LlmTunnel):
 		if len(content) == 0:
 			continue
 		HistoryLength += len(content)
-		var role: String
-		if not msgView.getMsgComment().contains(";"):
-			role = msgView.getMsgComment().get_slice(";", 0)
-		else:
-			role = msgView.getMsgComment()
+		var role: String = msgView.getMsgComment()
+		if role.contains(";"):
+			role = role.get_slice(";", 0)
 		assert (role=="user" or role=="assistant" or role=="system" or role=="tool")
 		messageSend.push_front({"role": role, "content": content})
 	messageSend.append({"role": "user", "content": message})

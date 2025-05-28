@@ -1,30 +1,40 @@
 extends PanelContainer
 
-var paragrText: String = ""
-var paragrCharacter: String = ""
-var formattedText: String = ""
-var bgColor: Color: get = getColor, set = fail
+var _paragrText: String = ""
+var _paragrCharacter: String = ""
+var _formattedText: String = ""
+var paragrCharacter: String: get = getParagrCharacter, set = fail
+var paragrText: String: get = getParagrText, set = fail
+var bgColor: Color: get = getColor, set = changeColor
 var _tunnel: LlmTunnel = null
 var _idealSize: int = 510
 
-signal characterChanged(charcterName)
+signal characterChanged(charcterName: String)
+signal editStarted(object: PanelContainer)
+signal editDone(object: PanelContainer)
+signal selected(object: PanelContainer, selecionOn: bool)
+signal addNewParagraph(object: PanelContainer, text: String, after: bool)
+signal ollamaContinue(object: PanelContainer, text: String, characterName: String)
+
+func _ready():
+	%ActionsMenu.get_popup().index_pressed.connect(_on_action_selected)
 
 func fail(_new):
 	assert (false)
 
 func setUp(newText: String, newColor: Color, newIdealSize: int):
-	assert (paragrText == "")
+	assert (_paragrText == "")
 	assert (%ColorRect.color == Color.WHITE)
-	paragrText = newText
+	_paragrText = newText
 	_idealSize = newIdealSize
 	%ColorRect.color = newColor
 	_setUp()
 
 func setUpLlm(tunnel: LlmTunnel, characterName: String, newColor: Color, newIdealSize: int):
-	assert (paragrText == "")
+	assert (_paragrText == "")
 	assert (%ColorRect.color == Color.WHITE)
 	assert (_tunnel == null)
-	paragrCharacter = characterName
+	_paragrCharacter = characterName
 	_tunnel = tunnel
 	_tunnel.streamOver.connect(_allReceived)
 	_tunnel.messageReceived.connect(_textReceived)
@@ -35,108 +45,186 @@ func setUpLlm(tunnel: LlmTunnel, characterName: String, newColor: Color, newIdea
 	%ResponseWaitLab.show()
 	%ProgressBar.show()
 
+func connectLlm(tunnel: LlmTunnel):
+	_tunnel = tunnel
+	_tunnel.streamOver.connect(_allReceived)
+	_tunnel.messageReceived.connect(_textReceived)
+	%EditButton.disabled = true
+
 func changeColor(newColor: Color):
 	%ColorRect.color = newColor
 
 func getColor() -> Color:
 	return %ColorRect.color
 
+func getParagrCharacter() -> String:
+	return _paragrCharacter
+
+func getParagrText() -> String:
+	return _paragrText
+
 func setIdealSize(newIdealSize: int):
 	_idealSize = newIdealSize
 	_setSize()
 
+func setEditable(editable: bool):
+	%EditButton.disabled = not editable
+
 func _setSize():
 	%TextEdit.custom_minimum_size.x = _idealSize + 60
-	var length: int = paragrText.length()
+	var length: int = _paragrText.length()
 	%TextView.custom_minimum_size = Vector2(min(_idealSize, length*10), 0)
 
 func _textReceived(textChunk: String, _role: String, _api: String, _model: String):
 	%ResponseWaitLab.hide()
 	%TextView.show()
-	paragrText += textChunk
-	if paragrText.contains(":"):
-		var splitText = paragrText.split(":", true, 1)
-		formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
+	_paragrText += textChunk
+	#This following condition is if a "reasoning model" such as qwen is used.
+	#I have no idea if other "reasoning models" use a similar tagging for their
+	#thinking part, but I'm running with this here, hardcoding that.
+	if _paragrText.begins_with("<think>"):
+		_formattedText = "[i]" + _paragrText
+		if _formattedText.contains("</think>"):
+			var splitText = _formattedText.split("</think>", true, 1)
+			var reply = splitText[1].lstrip("\n \t")
+			if reply.contains(":"):
+				var splitText2 = reply.split(":", true, 1)
+				reply = "[b]" + splitText2[0] + ":[/b]" + splitText2[1]
+			_formattedText = splitText[0] + "[/i] \n" + reply
+		%TextView.text = _formattedText
+		%TextEdit.text = _paragrText
+		return
+	if _paragrText.contains(":"):
+		var splitText = _paragrText.split(":", true, 1)
+		_formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
 	else:
-		formattedText = paragrText
-	%TextView.text = formattedText
-	%TextEdit.text = paragrText
+		_formattedText = _paragrText
+	%TextView.text = _formattedText
+	%TextEdit.text = _paragrText
 
 func _allReceived():
 	_tunnel.disconnectApi()
 	_tunnel = null
 	%EditButton.disabled = false
 	%ProgressBar.hide()
-	if paragrText.contains("\n"):
-		var lines = paragrText.split("\n")
-		paragrText = lines[0]
-		for line in lines:
-			if line.begins_with(paragrCharacter + ": "):
-				paragrText += " " + line.trim_prefix(paragrCharacter + ": ")
+	#remove the reasoning part and leave only the response for qwen.
+	if _paragrText.contains("</think>"):
+		_paragrText = _paragrText.get_slice("</think>", 1)
+	_paragrText = paragrText.rstrip("\n \t").lstrip("\n \t")
+	if _paragrText.contains("\n"):
+		var lines = _paragrText.split("\n", 1)
+		_paragrText = lines[0]
+		for line in lines[1].split("\n"):
+			if line.begins_with(_paragrCharacter + ": "):
+				_paragrText += " " + line.trim_prefix(_paragrCharacter + ": ")
 				continue
 			break
-	if not paragrText.begins_with(paragrCharacter):
-		if paragrText.contains(paragrCharacter + ": "):
-			paragrText = (
-				paragrCharacter + ": " +
-				paragrText.get_slice(paragrCharacter + ": ", 0) +
-				paragrText.get_slice(paragrCharacter + ": ", 1)
+	if not _paragrText.begins_with(_paragrCharacter):
+		if _paragrText.contains(_paragrCharacter + ": "):
+			_paragrText = (
+				_paragrCharacter + ": " +
+				_paragrText.get_slice(_paragrCharacter + ": ", 0) +
+				_paragrText.get_slice(_paragrCharacter + ": ", 1)
 			)
 		else:
-			paragrText = paragrCharacter + ": " + paragrText
+			_paragrText = _paragrCharacter + ": " + _paragrText
 	_setUp()
 
 func _setUp():
-	var oldCharacter: String = paragrCharacter
-	if paragrText.contains(":"):
-		var splitText = paragrText.split(":", true, 1)
-		formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
-		paragrCharacter = splitText[0]
+	var oldCharacter: String = _paragrCharacter
+	if _paragrText.contains(":"):
+		var splitText = _paragrText.split(":", true, 1)
+		_formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
+		_paragrCharacter = splitText[0]
 	else:
-		paragrCharacter = "Narrator"
-		formattedText = "[b]Narrator:[/b] " + paragrText
-		paragrText = "Narrator: " + paragrText
-	if formattedText.contains(" *"):
+		_paragrCharacter = "Narrator"
+		_formattedText = "[b]Narrator:[/b] " + _paragrText
+		_paragrText = "Narrator: " + _paragrText
+	if _formattedText.contains(" *"):
 		var newFormText: String = ""
 		var startind: int = 0
 		var finishind: int = -1
 		var prevFinishind: int = 0
-		while startind < len(formattedText):
-			startind = formattedText.find(" *", finishind + 1)
+		while startind < len(_formattedText):
+			startind = _formattedText.find(" *", finishind + 1)
 			if startind == -1:
-				newFormText += (formattedText.substr(prevFinishind))
+				newFormText += (_formattedText.substr(prevFinishind))
 				break
-			finishind = formattedText.find("* ", startind + 2)
+			finishind = _formattedText.find("* ", startind + 2)
 			if finishind == -1:
-				if not formattedText.ends_with("*"):
-					newFormText += (formattedText.substr(prevFinishind))
+				if not _formattedText.ends_with("*"):
+					newFormText += (_formattedText.substr(prevFinishind))
 					break
-				finishind = len(formattedText)-1
+				finishind = len(_formattedText)-1
 			newFormText += (
-				formattedText.substr(prevFinishind, startind+1-prevFinishind) + "[i]" +
-				formattedText.substr(startind+1, finishind-startind) + "[/i]"
+				_formattedText.substr(prevFinishind, startind+1-prevFinishind) + "[i]" +
+				_formattedText.substr(startind+1, finishind-startind) + "[/i]"
 			)
 			prevFinishind = finishind + 1
 			startind = finishind + 1
-		formattedText = newFormText
-	if not oldCharacter.is_empty() and paragrCharacter != oldCharacter:
-		characterChanged.emit(paragrCharacter)
-	%TextView.text = formattedText
-	%TextEdit.text = paragrText
+		_formattedText = newFormText
+	if not oldCharacter.is_empty() and _paragrCharacter != oldCharacter:
+		characterChanged.emit(_paragrCharacter)
+	%TextView.text = _formattedText
+	%TextEdit.text = _paragrText
 	_setSize()
 
+func _splitParagraph():
+	if not %TextEdit.text.contains("\n"):
+		%CannotSplit.show()
+		return
+	var newPragrText: String = (
+		%TextEdit.text.get_slice(":", 0) + ": " +
+		%TextEdit.text.split("\n", false, 1)[1]
+	)
+	%TextEdit.text = %TextEdit.text.get_slice("\n", 0)
+	finishEdit()
+	addNewParagraph.emit(self, newPragrText, true)
+
+func _ollamaContinue():
+	finishEdit()
+	ollamaContinue.emit(self, _paragrText, _paragrCharacter)
+
 func _on_edit_button_pressed():
+	%TextEdit.custom_minimum_size.y = %TextView.size.y
 	%ColorRect.hide()
 	%TextView.hide()
 	%TextEdit.show()
 	%EditButton.hide()
 	%DoneButton.show()
+	%Selection.hide()
+	%ActionsMenu.show()
+	editStarted.emit(self)
 
 func _on_done_button_pressed():
+	finishEdit()
+
+func finishEdit():
 	%ColorRect.show()
 	%TextView.show()
 	%TextEdit.hide()
 	%EditButton.show()
 	%DoneButton.hide()
-	paragrText = %TextEdit.text
+	%Selection.show()
+	%ActionsMenu.hide()
+	_paragrText = %TextEdit.text.rstrip("\n \t").lstrip("\n \t")
 	_setUp()
+	editDone.emit(self)
+
+func _on_selection_toggled(toggled_on):
+	selected.emit(self, toggled_on)
+
+func _on_action_selected(index: int):
+	match index:
+		0:
+			_splitParagraph()
+		1:
+			_ollamaContinue()
+
+func _on_text_edit_text_changed():
+	if %TextEdit.text.ends_with("\n"):
+		finishEdit()
+		return
+	if %TextEdit.text.ends_with("\t"):
+		_ollamaContinue()
+		return

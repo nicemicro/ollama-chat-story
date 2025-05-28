@@ -178,6 +178,12 @@ file_mode = 0
 access = 1
 filters = PackedStringArray("*.lc.json;LLM-chat JSON;text/json", "*json;JSON;text/json")
 
+[node name="LlmNotConnDial" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+initial_position = 4
+dialog_text = "Ollama is not available.
+Try connecting through the side panels."
+
 [connection signal="text_changed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatInput" to="." method="_on_chat_input_text_changed"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm/ChatSend" to="." method="_on_chat_send_pressed"]
 [connection signal="buttonPressed" from="MainWindow/VBoxContainer/GenerateText/CharacterButtons/NarrationButton" to="." method="llmParagraphGenerate"]

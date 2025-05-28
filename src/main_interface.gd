@@ -25,6 +25,7 @@ func connectChapterSignals(newChapter):
 	newChapter.unhideCharacter.connect(_on_unhideCharacter)
 	newChapter.openCharacterStory.connect(_on_openCharacterStory)
 	newChapter.paragraphCharacter.connect(_on_paragraphCharacter)
+	newChapter.paragrapAdded.connect(_on_paragraphAdded)
 
 func _input(event):
 	if not is_node_ready():
@@ -45,6 +46,9 @@ func _on_chat_input_text_changed():
 	newText = newText.replace("\n", " ").rstrip(" ")
 	if newText == "":
 		%ChatInput.text = newText
+
+func _on_paragraphAdded(paragrapNode):
+	paragrapNode.ollamaContinue.connect(llmParagraphExpand)
 
 func _on_chat_send_pressed():
 	sendChatMessage()
@@ -67,12 +71,7 @@ func sendChatMessage():
 	%ChatInput.text = ""
 	%LoadButton.disabled = true
 
-func llmParagraphGenerate(characterName: String):
-	var chapterNode = %Chapters.get_current_tab_control()
-	var dataPackage: Dictionary
-	var draft: String = ""
-	var prompt: String
-	var instruction: String = "new_paragraph"
+func _gatherDataFromUi(dataPackage: Dictionary, chapterNode):
 	if len(%TitleEdit.text) > 0:
 		dataPackage["title"] = %TitleEdit.text
 	if len(%ScenarioEdit.text) > 0:
@@ -85,9 +84,8 @@ func llmParagraphGenerate(characterName: String):
 		)
 	if len(%ContextEdit.text) > 0:
 		dataPackage["current_context"] = %ContextEdit.text.replace("\n", " ")
-	if %GenerateByText.button_pressed and len(%ChatInput.text) > 0:
-		draft = %ChatInput.text.replace("\n", " ")
-		instruction = "expand_paragraph"
+
+func _gatherCharacters(dataPackage: Dictionary, chapterNode):
 	var chapterName = chapterNode.chapterName
 	for characterButton in get_tree().get_nodes_in_group("characterButton"):
 		if characterButton.visible:
@@ -97,7 +95,24 @@ func llmParagraphGenerate(characterName: String):
 			dataPackage["characters"][suppCharName] = (
 				characters[suppCharName]["chapters"][chapterName]
 			)
+
+func llmParagraphGenerate(characterName: String):
+	if not %LLMControl.isLlmConnected():
+		%LlmNotConnDial.show()
+		return
+	var chapterNode = %Chapters.get_current_tab_control()
+	var dataPackage: Dictionary
+	var draft: String = ""
+	var prompt: String
+	var instruction: String = "new_paragraph"
+	_gatherDataFromUi(dataPackage, chapterNode)
+	if %GenerateByText.button_pressed and len(%ChatInput.text) > 0:
+		draft = %ChatInput.text.replace("\n", " ")
+		instruction = "expand_paragraph"
+	_gatherCharacters(dataPackage, chapterNode)
 	dataPackage["paragraphs"] = chapterNode.getParagraphs()
+	if dataPackage["paragraphs"].is_empty():
+		dataPackage.erase("paragraphs")
 	instruction += ":" + characterName
 	prompt = %LLMControl.generatePrompt(draft, dataPackage, instruction)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
@@ -107,6 +122,33 @@ func llmParagraphGenerate(characterName: String):
 	if characterName in characters:
 		color = characters[characterName]["color"]
 	chapterNode.addOllamaPragr(tunnel, characterName, color)
+
+func llmParagraphExpand(paragrObject, text: String, characterName: String):
+	if not %LLMControl.isLlmConnected():
+		%LlmNotConnDial.show()
+		return
+	var chapterNode = %Chapters.get_current_tab_control()
+	var dataPackage: Dictionary
+	var prompt: String
+	var instruction: String = "continue_paragraph"
+	_gatherDataFromUi(dataPackage, chapterNode)
+	_gatherCharacters(dataPackage, chapterNode)
+	if "characters" not in dataPackage:
+		dataPackage["characters"] = {
+			characterName: characters[characterName]["chapters"][chapterNode.chapterName]
+		}
+	if characterName not in dataPackage["characters"]:
+		dataPackage["characters"][characterName] = (
+			characters[characterName]["chapters"][chapterNode.chapterName]
+		)
+	if paragrObject.get_index() > 0:
+		dataPackage["paragraphs"] = chapterNode.getParagraphs(paragrObject.get_index()-1)
+	instruction += ":" + characterName
+	prompt = %LLMControl.generatePrompt(text, dataPackage, instruction)
+	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
+		"generate", prompt
+	)
+	paragrObject.connectLlm(tunnel)
 
 func on_chapterTitleChange(newTitle, object):
 	var idx: int = %Chapters.get_tab_idx_from_control(object)
@@ -277,10 +319,10 @@ func loadScenario(fileName: String):
 					chapterCharacterMatrix[characterName][chapterName] = (
 						chapterData["Characters"][characterName]
 					)
+			connectChapterSignals(newChapter)
 			newChapter.setBulkProperties(
 				chapterName, title, background, paragraphs
 			)
-			connectChapterSignals(newChapter)
 			newChapter.changeCharacterColor("Narrator", Color(0.1, 0.1, 0.1))
 			%Chapters.add_child(newChapter)
 			var idx: int = %Chapters.get_tab_idx_from_control(newChapter)
