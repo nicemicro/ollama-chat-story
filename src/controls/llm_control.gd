@@ -81,6 +81,7 @@ func addToOllamaQueue(msgType: String, message: String, llmTunnel: LlmTunnel = n
 	sentMessageBox.hideProgressBar()
 	%LLMResponses.add_child(sentMessageBox)
 	var receiveMsgDispl = msgboxScene.instantiate()
+	receiveMsgDispl.addText("", "assistant")
 	llmTunnel.messageReceived.connect(receiveMsgDispl.receiveLlmMessage)
 	llmTunnel.streamOver.connect(receiveMsgDispl.hideProgressBar)
 	%LLMResponses.add_child(receiveMsgDispl)
@@ -141,7 +142,6 @@ func _messageFromOllama(_a, _b, _c, _d):
 func _ollamaStreamDone():
 	call_deferred("scrollBottom")
 	_sendMsgQueue[0]["responseDispl"].hideProgressBar()
-	_sendMsgQueue[0]["tunnel"].disconnectApi()
 	_sendMsgQueue.pop_front()
 
 func scrollBottom():
@@ -160,7 +160,13 @@ func _on_connect_pressed():
 			ollamaHost = ollamaUrl
 	%ApiAccess.host = ollamaHost
 	%ApiAccess.port = ollamaPort
-	%ApiAccess.connectToHost()
+	if %ApiAccess.isDisconnected():
+		%ApiAccess.connectToHost()
+
+func _on_disconnect_butt_pressed():
+	%ConnectButt.show()
+	%DisconnectButt.hide()
+	%ApiAccess.disconnectHost()
 
 func _on_direct_msg_send_pressed():
 	var _tunnel = addToOllamaQueue("chat", %DirectMsgText.text)
@@ -170,16 +176,17 @@ func _on_api_access_connection_success():
 	%ApiAccess.sendRequest("api/tags")
 	_modelListTunnel = LlmTunnel.new(%ApiAccess)
 	_modelListTunnel.responseReceived.connect(showModels)
+	%ConnectButt.hide()
+	%DisconnectButt.show()
 
 func _on_api_access_unexpected_disconnect():
 	if not _sendMsgQueue.is_empty() and _sendMsgQueue[0]["responseDispl"] != null:
-		_sendMsgQueue[0]["tunnel"].disconnectApi()
 		var receiveMsgDispl = _sendMsgQueue[0]["responseDispl"]
-		receiveMsgDispl.hideProgressBar()
 		receiveMsgDispl.addText("\n\n-----\n(( ERROR, OLLAMA DISCONNECTED ))")
-		_sendMsgQueue.pop_front()
 	%StatusLabel.text = "Status: Error, disconnected"
 	%SelectModel.clear()
+	%DisconnectButt.hide()
+	%ConnectButt.show()
 	connectionSevered.emit()
 
 func _on_title_bar_hide_pressed(object):

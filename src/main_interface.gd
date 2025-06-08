@@ -26,6 +26,7 @@ func connectChapterSignals(newChapter):
 	newChapter.openCharacterStory.connect(_on_openCharacterStory)
 	newChapter.paragraphCharacter.connect(_on_paragraphCharacter)
 	newChapter.paragrapAdded.connect(_on_paragraphAdded)
+	newChapter.summarizeParagraphs.connect(_on_paragraphSummary)
 
 func _input(event):
 	if not is_node_ready():
@@ -54,6 +55,9 @@ func _on_chat_send_pressed():
 	sendChatMessage()
 
 func sendChatMessage():
+	if %ChatWho.selected == -1:
+		%NoCharacterSel.show()
+		return
 	var newText: String = %ChatInput.text
 	newText = newText.replace("\n", " ").rstrip(" ")
 	if newText.is_empty():
@@ -70,6 +74,9 @@ func sendChatMessage():
 	activeChapter.addParagraph(newText, textColor)
 	%ChatInput.text = ""
 	%LoadButton.disabled = true
+	if %AutoReplyWho.get_selected_id() != 0:
+		var selectedId: int = %AutoReplyWho.get_item_index(%AutoReplyWho.get_selected_id())
+		llmParagraphGenerate(%AutoReplyWho.get_item_text(selectedId))
 
 func _gatherDataFromUi(dataPackage: Dictionary, chapterNode):
 	if len(%TitleEdit.text) > 0:
@@ -111,6 +118,8 @@ func llmParagraphGenerate(characterName: String):
 		instruction = "expand_paragraph"
 	_gatherCharacters(dataPackage, chapterNode)
 	dataPackage["paragraphs"] = chapterNode.getParagraphs()
+	if not dataPackage["paragraphs"].is_empty():
+		dataPackage["last_paragraph"] = dataPackage["paragraphs"].pop_back()
 	if dataPackage["paragraphs"].is_empty():
 		dataPackage.erase("paragraphs")
 	instruction += ":" + characterName
@@ -149,6 +158,23 @@ func llmParagraphExpand(paragrObject, text: String, characterName: String):
 		"generate", prompt
 	)
 	paragrObject.connectLlm(tunnel)
+
+func llmSummaryGenerate(paragraphList: Array, afterIndex: int):
+	assert(not paragraphList.is_empty())
+	if not %LLMControl.isLlmConnected():
+		%LlmNotConnDial.show()
+		return
+	var chapterNode = %Chapters.get_current_tab_control()
+	var dataPackage: Dictionary
+	var prompt: String
+	_gatherDataFromUi(dataPackage, chapterNode)
+	dataPackage["paragraphs_summary"] = paragraphList
+	prompt = %LLMControl.generatePrompt("", dataPackage, "paragraphs_summary")
+	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
+		"generate", prompt
+	)
+	var color: Color = _narratorColor
+	chapterNode.addOllamaPragr(tunnel, "SUMMARY", color, afterIndex)
 
 func on_chapterTitleChange(newTitle, object):
 	var idx: int = %Chapters.get_tab_idx_from_control(object)
@@ -198,26 +224,37 @@ func _addCharacter(character: String, chapter: String, description: String = "")
 		newGenerateButton.disabled = true
 	%CharacterButtons.add_child(newGenerateButton)
 	%ChatWho.add_item(character)
+	%AutoReplyWho.add_item(character)
 
 func _on_hideCharacter(character: String):
-	var selectedIndex: int = %ChatWho.get_item_id(%ChatWho.get_selected_id())
 	for characterButton in get_tree().get_nodes_in_group("characterButton"):
 		if characterButton.text == character:
 			characterButton.hide()
 			break
-	for index in range(%ChatWho.item_count):
-		if %ChatWho.get_item_text(index) == character:
-			%ChatWho.remove_item(index)
+	_hideCharfromButt(character, %ChatWho)
+	_hideCharfromButt(character, %AutoReplyWho)
+
+func _hideCharfromButt(character: String, button: OptionButton):
+	var selectedIndex: int = button.get_item_index(button.get_selected_id())
+	for index in range(button.item_count):
+		if button.get_item_text(index) == character:
+			button.remove_item(index)
 			if index == selectedIndex:
-				%ChatWho.select(0)
+				button.select(0)
+			elif index < selectedIndex:
+				button.select(selectedIndex-1)
 			break
 
 func _on_unhideCharacter(character: String):
-	var selectedIndex: int = %ChatWho.get_item_id(%ChatWho.get_selected_id())
-	var selectedText: String = %ChatWho.get_item_text(%ChatWho.get_selected_id())
+	_unhideCharFromButt(character, %ChatWho, "Narrator")
+	_unhideCharFromButt(character, %AutoReplyWho, "No reply")
+
+func _unhideCharFromButt(character: String, button: OptionButton, default: String):
+	var selectedIndex: int = button.get_item_index(button.get_selected_id())
+	var selectedText: String = button.get_item_text(selectedIndex)
 	var adjust: int = 1
-	%ChatWho.clear()
-	%ChatWho.add_item("Narrator")
+	button.clear()
+	button.add_item(default)
 	for characterButton in get_tree().get_nodes_in_group("characterButton"):
 		if characterButton.text == character:
 			characterButton.show()
@@ -225,8 +262,8 @@ func _on_unhideCharacter(character: String):
 		if characterButton.text == selectedText:
 			adjust = 1 #if the selected character comes up first, it will be zeroed later
 		if characterButton.visible:
-			%ChatWho.add_item(characterButton.text)
-	%ChatWho.select(selectedIndex + adjust)
+			button.add_item(characterButton.text)
+	button.select(selectedIndex + adjust)
 
 func _on_paragraphCharacter(characterName, chapter):
 	var newChar: bool = false
@@ -247,6 +284,9 @@ func _on_character_editor_character_change(text, newColor, character, chapter):
 	characters[character]["chapters"][chapter] = text
 	for child in %Chapters.get_children():
 		child.changeCharacterColor(character, newColor)
+
+func _on_paragraphSummary(paragraphList: Array, afterIndex: int):
+	llmSummaryGenerate(paragraphList, afterIndex)
 
 func _on_llm_control_connection_severed():
 	for node in get_tree().get_nodes_in_group("llmButton"):

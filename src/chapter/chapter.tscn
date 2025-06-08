@@ -73,8 +73,13 @@ initial_position = 4
 ok_button_text = "Delete"
 dialog_text = "You will be deleting the selected paragraphs from the story. There is no undo button in this software."
 
+[node name="SummarizeParagraphs" type="Button" parent="ScrollContainer/List/ParagraphOptions"]
+layout_mode = 2
+text = "Summarize"
+
 [connection signal="text_changed" from="ScrollContainer/List/ChapterTitle" to="." method="_on_chapter_title_text_changed"]
 [connection signal="pressed" from="ScrollContainer/List/Characters/ShowAllButton" to="." method="_on_show_all_button_pressed"]
 [connection signal="resized" from="ScrollContainer/List/ScrollStory/StoryParagraphs" to="." method="_on_story_paragraphs_resized"]
 [connection signal="pressed" from="ScrollContainer/List/ParagraphOptions/DeleteParagraph" to="." method="_on_delete_paragraph_pressed"]
 [connection signal="confirmed" from="ScrollContainer/List/ParagraphOptions/DeleteParagraph/DeleteConfirm" to="." method="_on_delete_confirm_confirmed"]
+[connection signal="pressed" from="ScrollContainer/List/ParagraphOptions/SummarizeParagraphs" to="." method="_on_summarize_paragraphs_pressed"]

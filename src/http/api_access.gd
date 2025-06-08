@@ -1,7 +1,11 @@
+#(C) by Nice Micro 2025
+#You can use this scene by itself, or together with other files from this
+#repository, conditional to the AGPL license.
+#You can find all conditions in the LICENSE file in the root repository.
+
 extends Node
 
 enum STATUS {
-	ready,
 	disconnected,
 	connecting,
 	connected,
@@ -36,7 +40,6 @@ func isDisconnected() -> bool:
 
 func isBusy() -> bool:
 	return (
-		_connectionStatus != STATUS.ready and
 		_connectionStatus != STATUS.connected and
 		_connectionStatus != STATUS.disconnected
 	)
@@ -51,12 +54,12 @@ func isAvailable() -> bool:
 
 func _ready():
 	_http = HTTPClient.new() # Create the Client.
-	_connectionStatus = STATUS.ready
+	_connectionStatus = STATUS.disconnected
 
 func _process(_delta):
 	var good: bool = true
 	match _connectionStatus:
-		STATUS.ready:
+		STATUS.disconnected:
 			return
 		STATUS.connecting:
 			good = _waitConnection()
@@ -70,17 +73,16 @@ func _process(_delta):
 			good = _checkInitialResponse()
 		STATUS.responseCollecting:
 			good = _collectResponses()
-		STATUS.disconnected:
-			return
 		_:
 			assert(false)
 	if not good:
 		_connectionStatus = STATUS.disconnected
+		_http.close()
 		unexpectedDisconnect.emit()
 
 func connectToHost() -> bool:
 	var err = 0
-	if _connectionStatus != STATUS.ready and _connectionStatus != STATUS.disconnected:
+	if _connectionStatus != STATUS.disconnected:
 		print_debug("Can't connect, the status is ", _connectionStatus)
 		return false #already in progress of receiving data
 	err = _http.connect_to_host(host, port) # Connect to host/port.
@@ -92,6 +94,14 @@ func connectToHost() -> bool:
 	_chunkList = []
 	headers = {}
 	return true #success
+
+func disconnectHost():
+	if not _chunkList.is_empty():
+		var fullMessage: String = "\n".join(_chunkList)
+		fullMessageReceived.emit(fullMessage)
+		_chunkList = []
+	_http.close()
+	_connectionStatus = STATUS.disconnected
 
 func _waitConnection() -> bool:
 	_http.poll()
@@ -141,6 +151,7 @@ func _collectResponses() -> bool:
 		var fullMessage: String = "\n".join(_chunkList)
 		#print_debug("--------------------", "\n", fullMessage)
 		fullMessageReceived.emit(fullMessage)
+		_chunkList = []
 		return true
 	_http.poll()
 	var chunk = _http.read_response_body_chunk()
@@ -182,7 +193,8 @@ func sendPostRequest(messageDict: Dictionary, path: String) -> bool:
 			#"prompt": "Report status. Say \"Status O.K.\" if you are ready to receive instructions"
 		#}
 	var json = JSON.stringify(messageDict)
-	var postHeaders = ["Content-Type: application/json", "Content-Length: " + str(json.length())]
+	#var postHeaders = ["Content-Type: application/json", "Content-Length: " + str(json.length())]
+	var postHeaders = ["Content-Type: application/json"]
 	var err = _http.request(HTTPClient.METHOD_POST, path, postHeaders, json)
 	if (err == OK):
 		_connectionStatus = STATUS.requestSending

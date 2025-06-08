@@ -4,8 +4,9 @@ const paragraphSceneUID = "uid://dklx1tdfmq6cb"
 const characterNameSceneUID = "uid://xss4d30ho6ir"
 
 @export var chapterName: String = ""
-var _tunnel: LlmTunnel = null
+var _tunnels: Array = []
 var _selectedParagrs: Array = []
+var _needToSummarize: int = -1
 
 signal chapterTitleChange(chapterTitle, chapterObject)
 signal openCharacterStory(characterName, chapterName)
@@ -15,6 +16,7 @@ signal hideCharacter(character: String)
 signal unhideCharacter(character: String)
 signal paragrapAdded(paragraphNode)
 signal paragraphCharacter(characterName: String, chapterName: String)
+signal summarizeParagraphs(paragraphList: Array, insertAfter: int)
 
 func _ready():
 	addEmptyCharacter()
@@ -33,37 +35,62 @@ func getChapterTitle() -> String:
 func getChapterBackground() -> String:
 	return %ChapterBackground.text
 
-func getParagraphs(startIndex: int = -1, maxlength: int = 10000) -> Array:
+func getParagraphs(startIndex: int = -1, maxlength: int = 12000) -> Array:
 	var paragrList: Array = []
 	var parindex: int = startIndex
 	if startIndex == -1:
 		parindex = %StoryParagraphs.get_child_count()
 	var length: int = 0
+	var summaryNeeded: int = _needToSummarize
 	while length < maxlength and parindex > 0:
 		parindex -= 1
 		var paragraphNode = %StoryParagraphs.get_child(parindex)
 		paragrList.push_front(paragraphNode.paragrText.replace("\n", " "))
+		length += len(paragraphNode.paragrText)
+		if length > maxlength * 0.6:
+			summaryNeeded = max(parindex, summaryNeeded)
+		if paragraphNode.paragrCharacter == "SUMMARY":
+			break
+	if length > maxlength * 0.85:
+		_needToSummarize = max(_needToSummarize, summaryNeeded)
 	return paragrList
 
 func addOllamaPragr(tunnel: LlmTunnel, characterName: String, color: Color, where: int = -1):
-	assert(_tunnel == null)
 	var packedScene = preload(paragraphSceneUID)
 	var newParagraph = packedScene.instantiate()
 	var idealSize: int = max(int(%StoryParagraphs.size.y * 0.8), 510)
 	_connectParagrSignals(newParagraph)
-	_tunnel = tunnel
-	_tunnel.messageReceived.connect(_scrollBottomDeferred)
-	_tunnel.streamOver.connect(_removeTunnel)
-	newParagraph.setUpLlm(_tunnel, characterName, color, idealSize)
+	_tunnels.append(tunnel)
+	tunnel.messageReceived.connect(_scrollBottomDeferred)
+	tunnel.streamOver.connect(_removeTunnel.bind(tunnel))
+	newParagraph.setUpLlm(tunnel, characterName, color, idealSize)
 	%StoryParagraphs.add_child(newParagraph)
 	if where == -1:
 		_scrollBottomDeferred()
 	else:
 		%StoryParagraphs.move_child(newParagraph, where)
 
-func _removeTunnel():
-	_tunnel.disconnectApi()
-	_tunnel = null
+func _removeTunnel(activeTunnel: LlmTunnel):
+	_tunnels.erase(activeTunnel)
+	if _needToSummarize != -1:
+		_requestAutoSummary()
+
+func _requestAutoSummary():
+	var lastSummaryIndex: int = 0
+	var parindex: int = %StoryParagraphs.get_child_count()
+	var paragraphList: Array = []
+	while parindex > 0:
+		parindex -= 1
+		var paragraphNode = %StoryParagraphs.get_child(parindex)
+		if parindex <= _needToSummarize:
+			paragraphList.push_front(paragraphNode.paragrText)
+		if paragraphNode.paragrCharacter == "SUMMARY":
+			lastSummaryIndex = parindex
+			break
+	if len(paragraphList) < 4:
+		return
+	summarizeParagraphs.emit(paragraphList, _needToSummarize+1)
+	_needToSummarize = -1
 
 func addParagraph(text: String, color: Color, where: int = -1):
 	var packedScene = preload(paragraphSceneUID)
@@ -137,7 +164,7 @@ func changeCharacterColor(character: String, newColor: Color):
 			child.changeColor(newColor)
 
 func validateNewCharacterName(characterName: String, nameBlock):
-	if characterName == "Narrator" or characterName == "narrator":
+	if characterName.to_lower() == "narrator" or characterName.to_lower() == "summary":
 		return
 	for child in %Characters.get_children():
 		if child is CheckButton:
@@ -177,10 +204,30 @@ func enableParagrEdits(_currentlyEdited: Control):
 	for child in %StoryParagraphs.get_children():
 		child.setEditable(true)
 
+func _addSelectedParagraph(selectedParagr: Control):
+	if _selectedParagrs.is_empty():
+		_selectedParagrs.append(selectedParagr)
+		return
+	var newIndex: int = selectedParagr.get_index()
+	if _selectedParagrs[0].get_index() > newIndex:
+		_selectedParagrs.push_front(selectedParagr)
+		return
+	elif _selectedParagrs[-1].get_index() < newIndex:
+		_selectedParagrs.push_back(selectedParagr)
+		return
+	for index in range(len(_selectedParagrs)):
+		if _selectedParagrs[index].get_index() > newIndex:
+			_selectedParagrs = (
+				_selectedParagrs.slice(0, index) +
+				[selectedParagr] +
+				_selectedParagrs.slice(index)
+			)
+			break
+
 func paragrSelected(selectedParagr: Control, selected: bool):
 	if selected:
 		assert (not selectedParagr in _selectedParagrs)
-		_selectedParagrs.append(selectedParagr)
+		_addSelectedParagraph(selectedParagr)
 	else:
 		assert (selectedParagr in _selectedParagrs)
 		_selectedParagrs.erase(selectedParagr)
@@ -229,3 +276,9 @@ func _on_delete_confirm_confirmed():
 			_selectedParagrs.erase(child)
 	assert(len(_selectedParagrs) == 0)
 	%ParagraphOptions.visible = false
+
+func _on_summarize_paragraphs_pressed():
+	var paragraphList: Array = []
+	for paragraph in _selectedParagrs:
+		paragraphList.append(paragraph.paragrText)
+	summarizeParagraphs.emit(paragraphList, _selectedParagrs[-1].get_index()+1)

@@ -35,11 +35,6 @@
 			described in the next paragraph:\n\n\"%0\"\n\nThis is just an outline, and should be
 			used as such.\n"
 		],
-		"current_context": [
-			"The current state of the plot, and the context for the part we are working on is
-			described here:\n\n%0\n\nThis information is important for the part we are
-			working on currently.\n"
-		],
 		"characters": [
 			"The characters taking part in the current plot, with their short descriptions are
 			listed below. The names of the characters are between two asterisk characters, and
@@ -50,43 +45,67 @@
 			%t\n(End of the listing of characters)\n"
 		],
 		"paragraphs": [
-			"The last paragraphs before the part you need to figure out are listed here, with
-			dialogue parts starting with the name of the character speaking and a colon. The lines
-			lines with narration start with the word \"Narrator:\". Quotation marks or asterisk
-			symbols migth be used to denote actions in dialogue parts, or dialogue in narration
-			parts.\n
+			"To give you a sample of the story, previous paragraphs before the part you
+			need to work on are listed here, with dialogue parts starting with the name of the
+			character speaking and a colon. The lines with narration start with the word
+			\"Narrator:\". Quotation marks or asterisk symbols migth be used to denote actions
+			in dialogue parts, or dialogue in narration parts.\n
 			%t\n%v\n
 			%t\n(End of the previous paragraphs)\n"
+		],
+		"current_context": [
+			"The current state of the plot, and the context for the part we are working on is
+			described here:\n\n%0\n\nThis information is important for the part we are
+			working on currently.\n"
+		],
+		"_style_guide": [
+			"When writing a new paragraph, you should follow the conventions of the paragraphs
+			already written. Dialogue starts with the name of the speaker followed by a colon,
+			and the style of the text follows the character's personality, actions or the way
+			of speech can be mentioned, enclosed in asterisks, and actions by other characters
+			should only be mentioned from the speaker's perspective. For narration paragraphs,
+			they always start with the word Narrator, followed by a colon (as in \"Narrator:\").
+			In case of a minor character speaking in a narration paragraph, enclose the speech
+			in quotation marks.\n
+			You should try to match the style of the preceeding paragraphs. Remember,
+			your response must contain only one paragraph you suggest to add to the story. This
+			single paragaph should be in plain unformatted text with no line breaks, and should
+			be narratively consistent with the preivous parts, but also novel, avoiding
+			repetitions.\n"
+		],
+		"last_paragraph": [
+			"The last paragraph of the story before the one you need to write is listed below.
+			This paragraph should be the most relevant for continuing the story, and the one you
+			write should be a response to it, and a continuation of the plot from here.\n
+			%t\n%v\n
+			%t\n(End of the last paragraph)\n"
+		],
+		"paragraphs_summary": [
+			"Your job here is to summarize the following paragraphs listed below, with
+			dialogue parts starting with the name of the character speaking and a colon. The
+			lines with narration start with the word \"Narrator:\". Quotation marks or
+			asterisk symbols migth be used to denote actions in dialogue parts, or
+			dialogue in narration parts.\n
+			%t\n%v\n
+			%t\n(End of the paragraph listings)\n"
 		]
 	},
 	"instructions": {
 		"new_paragraph:Narrator": [
 			"Considering all the information listed above, now your job is to
 			write a single paragraph of narration. Your response should only be this paragraph.
-			The response should start with \"Narrator: \" (without the quotation marks), to
-			signify that this is narration, and followed by at least three (3), at maximum seven
-			(7) sentences. This narration should propel the story forward by a reasonable degree,
-			without feeling rushed or forced. Match the narration style of the preceeding
-			paragraphs. You might include some short dialogue by non-major characters,
-			using quotation marks to show speech, but try keeping that to the minimum.\nRemember,
-			your response must contain only one paragraph you suggest to add to the story. This
-			single paragaph should be in plain unformatted text with no line breaks."
+			The response should start with \"Narrator: \" (without the quotation marks), and
+			followed by at least three (3), at maximum seven (7) sentences. This narration
+			should propel the story forward by a reasonable degree, without feeling rushed or
+			forced."
 		],
 		"new_paragraph:%_": [
-			"Considering all the information listed above, now your job is to
-			write a single paragraph of dialogue from the chacarter named \"%_\". Your response
-			should only be this paragraph. The response should start with \"%_: \" (without the
-			quotation marks), to signify that this is the character speaking, and followed by at
-			least three (3), at maximum seven (7) sentences. This paragraph is spoken by %_, and
-			therefore should be in the style of %_, based on previous paragraphs and %_'s
-			character description. You can mention the tone of the speech or actions done by %_
-			during talking, but clearly demark those by using either the asterisk or the quotation
-			mark characters, matching how it was done in the preceeding paragraphs. Avoid mixing
-			asterisks with quotation marks. In this paragraph, no other character should have a
-			speaking role, and all active action should be taken by %_, if other characters do
-			something, that should be described from the view point of %_.\nRemember, your response
-			must contain only one paragraph you suggest to add to the story. This single paragaph
-			should in plain unformatted text with no line breaks."
+			"Considering all the information listed above, now your job is to write a single
+			new paragraph of dialogue from the chacarter named \"%_\". The response should start
+			with \"%_: \" (without the quotation marks), to signify that this is the %_ speaking,
+			and followed by at least three (3), at maximum seven (7) sentences. This paragraph
+			is spoken by %_, and therefore should be in the style and personality of %_. Your
+			suggestion should propel the story forward."
 		],
 		"expand_paragraph:Narrator": [
 			"Considering all the information listed above, now your job is to
@@ -153,19 +172,30 @@
 			paragraph given by the user, and do not repeat the sentences given by the user. Here
 			is the paragraph you need to continue:\n\"\n%d\n\"\n"
 		],
+		"paragraphs_summary": [
+			"Considering the paragraphs listed above, your job is to formulate a summary of the
+			events described there in a single paragraph in plain text. The summary you make should
+			start with the word \"SUMMARY: \" in all caps, and a colon, contain all major plot
+			elements and character development moments in about five (5) to twelve (12) sentences
+			Consider, that tis summary will be used in the future to generate more paragraphs for
+			the story, so it should be written to be helpful for the author."
+		]
 	},
 	"constructions": {
 		"new_paragraph": [
-			"_start", "title", "scenario", "chapter_title", "chapter_scenario", "current_context",
-			"characters", "paragraphs"
+			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
+			"characters", "paragraphs", "current_context", "_style_guide", "last_paragraph"
 		],
 		"expand_paragraph": [
-			"_start", "title", "scenario", "chapter_title", "chapter_scenario", "current_context",
-			"characters", "paragraphs"
+			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
+			"characters", "paragraphs", "current_context", "_style_guide", "last_paragraph"
 		],
 		"continue_paragraph": [
-			"_start", "title", "scenario", "chapter_title", "chapter_scenario", "current_context",
-			"characters", "paragraphs"
+			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
+			"characters", "paragraphs", "current_context", "_style_guide", "last_paragraph"
+		],
+		"paragraphs_summary": [
+			"_start", "paragraphs_summary"
 		]
 	}
 }

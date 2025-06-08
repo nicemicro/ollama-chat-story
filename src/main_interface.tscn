@@ -73,7 +73,6 @@ layout_mode = 2
 [node name="ChatWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
 unique_name_in_owner = true
 layout_mode = 2
-selected = 0
 item_count = 1
 popup/item_0/text = "Narration"
 popup/item_0/id = 0
@@ -83,6 +82,23 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Send the text in the texbox directly without modification"
 text = "Send"
+
+[node name="NoCharacterSel" type="AcceptDialog" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+unique_name_in_owner = true
+initial_position = 4
+dialog_text = "Select a character first."
+
+[node name="Label" type="Label" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+layout_mode = 2
+text = "Auto reply"
+
+[node name="AutoReplyWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 1
+popup/item_0/text = "No reply"
+popup/item_0/id = 0
 
 [node name="GenerateText" type="ScrollContainer" parent="MainWindow/VBoxContainer"]
 layout_mode = 2

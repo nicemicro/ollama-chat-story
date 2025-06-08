@@ -35,6 +35,8 @@ func setUpLlm(tunnel: LlmTunnel, characterName: String, newColor: Color, newIdea
 	assert (%ColorRect.color == Color.WHITE)
 	assert (_tunnel == null)
 	_paragrCharacter = characterName
+	if _paragrCharacter == "SUMMARY":
+		size_flags_horizontal = Control.SIZE_SHRINK_END
 	_tunnel = tunnel
 	_tunnel.streamOver.connect(_allReceived)
 	_tunnel.messageReceived.connect(_textReceived)
@@ -103,10 +105,11 @@ func _textReceived(textChunk: String, _role: String, _api: String, _model: Strin
 	%TextEdit.text = _paragrText
 
 func _allReceived():
-	_tunnel.disconnectApi()
 	_tunnel = null
 	%EditButton.disabled = false
 	%ProgressBar.hide()
+	%ResponseWaitLab.hide()
+	%TextView.show()
 	#remove the reasoning part and leave only the response for qwen.
 	if _paragrText.contains("</think>"):
 		_paragrText = _paragrText.get_slice("</think>", 1)
@@ -163,6 +166,10 @@ func _setUp():
 			prevFinishind = finishind + 1
 			startind = finishind + 1
 		_formattedText = newFormText
+	if _paragrCharacter == "SUMMARY":
+		size_flags_horizontal = Control.SIZE_SHRINK_END
+	else:
+		size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	if not oldCharacter.is_empty() and _paragrCharacter != oldCharacter:
 		characterChanged.emit(_paragrCharacter)
 	%TextView.text = _formattedText

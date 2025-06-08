@@ -36,16 +36,23 @@ unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "localhost:11434"
 
-[node name="Connect" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="2"]
+[node name="ConnectButt" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="2"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Connect to Ollama"
 
-[node name="StatusLabel" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="3"]
+[node name="DisconnectButt" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="3"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Disconnect Ollama"
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="4"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Status: disconnected"
 
-[node name="SelectModel" type="OptionButton" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="4"]
+[node name="SelectModel" type="OptionButton" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="5"]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -109,7 +116,8 @@ unique_name_in_owner = true
 
 [connection signal="hidePressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_hide_pressed"]
 [connection signal="openPressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_open_pressed"]
-[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/Connect" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/ConnectButt" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/DisconnectButt" to="." method="_on_disconnect_butt_pressed"]
 [connection signal="hidePressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar" to="." method="_on_title_bar_hide_pressed"]
 [connection signal="openPressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar" to="." method="_on_title_bar_open_pressed"]
 [connection signal="hidePressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar" to="." method="_on_title_bar_hide_pressed"]

@@ -47,11 +47,14 @@ func generatePrompt(draft: String, dataPackage: Dictionary, instruction: String)
 	elif instruction + ":%_" in _instructions:
 		instructionPrompt = _instructions[instruction + ":%_"].pick_random()
 		instructionPrompt = instructionPrompt.replace("%_", character)
+	elif instruction in _instructions:
+		instructionPrompt = _instructions[instruction].pick_random()
 	else:
 		assert(false)
 	prompt += instructionPrompt.replace("%d", draft)
 	if prompt.right(1) == "\n":
 		prompt = prompt.left(-1)
+	#print_debug(prompt)
 	return prompt
 
 func _promptPartConstruct(promptTempl: String, dataPart) -> String:

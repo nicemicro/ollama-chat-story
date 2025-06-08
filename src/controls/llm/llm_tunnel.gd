@@ -2,12 +2,14 @@ extends Resource
 class_name LlmTunnel
 
 var _id: int = -1
+var _autoDisconnect: bool = true
 
 signal responseReceived(wholeMsg: Dictionary)
 signal messageReceived(textChunk: String, role: String, api: String, model: String)
 signal streamOver()
 
-func _init(apiAccess = null):
+func _init(apiAccess = null, autodisconnect: bool = true):
+	_autoDisconnect = autodisconnect
 	if apiAccess == null:
 		return
 	connectApi(apiAccess)
@@ -55,6 +57,10 @@ func receiveMessage(chunk: String):
 		)
 		if "done" not in dataDict or dataDict["done"]:
 			streamOver.emit()
+			if _autoDisconnect:
+				disconnectApi()
 
 func apiLost():
 	streamOver.emit()
+	if _autoDisconnect:
+		disconnectApi()
