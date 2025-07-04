@@ -6,6 +6,7 @@ var characterName: String = "": get = getCharacterName, set = setCharacterName
 signal checkName(characterName: String, object)
 signal nameAdded(characterName: String)
 signal storyEditRequest(characterName: String)
+signal selectAllRequest(characterName: String, object)
 signal deleteRequest(characterName: String)
 signal hideName(object)
 signal unhideName(object)
@@ -47,10 +48,14 @@ func finalize():
 	%StoryEdButton.show()
 	%DelButton.show()
 	%PresentSwitch.show()
+	add_to_group("charactelCtrlPanel")
 	nameAdded.emit(characterName)
 
 func _on_story_ed_button_pressed():
 	storyEditRequest.emit(characterName)
+
+func _on_select_all_button_pressed():
+	selectAllRequest.emit(characterName, self)
 
 func _on_del_button_pressed():
 	deleteRequest.emit(characterName)
@@ -60,3 +65,7 @@ func _on_present_switch_toggled(toggled_on):
 		hideName.emit(self)
 	else:
 		unhideName.emit(self)
+
+func hasParagraphs(has: bool):
+	%DelButton.visible = not has
+	%SelectAllButton.visible = has

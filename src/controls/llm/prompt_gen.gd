@@ -38,7 +38,12 @@ func generatePrompt(draft: String, dataPackage: Dictionary, instruction: String)
 		instruction = instruction.get_slice(":", 0)
 	for key in _constructions[instruction]:
 		if key.left(1) == "_":
-			prompt += _prompts[key].pick_random() + "\n"
+			if key + ":" + character in _prompts:
+				prompt += _prompts[key + ":" + character].pick_random() + "\n"
+			elif key + ":%_" in _prompts and character != "":
+				prompt += _prompts[key + ":%_"].pick_random().replace("%_", character) + "\n"
+			elif key in _prompts:
+				prompt += _prompts[key].pick_random() + "\n"
 		if key in dataPackage:
 			prompt += _promptPartConstruct(_prompts[key].pick_random(), dataPackage[key]) + "\n"
 	var instructionPrompt: String

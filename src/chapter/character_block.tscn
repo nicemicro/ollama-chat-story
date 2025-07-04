@@ -38,10 +38,18 @@ visible = false
 layout_mode = 2
 text = "Edit"
 
+[node name="SelectAllButton" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Select all"
+text = "SelAll"
+
 [node name="DelButton" type="Button" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+tooltip_text = "Delete character from chapter"
 text = "Del"
 
 [node name="PresentSwitch" type="CheckButton" parent="."]
@@ -54,5 +62,6 @@ text = "Use"
 [connection signal="text_submitted" from="NameInput" to="." method="_on_name_input_text_submitted"]
 [connection signal="pressed" from="SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="StoryEdButton" to="." method="_on_story_ed_button_pressed"]
+[connection signal="pressed" from="SelectAllButton" to="." method="_on_select_all_button_pressed"]
 [connection signal="pressed" from="DelButton" to="." method="_on_del_button_pressed"]
 [connection signal="toggled" from="PresentSwitch" to="." method="_on_present_switch_toggled"]

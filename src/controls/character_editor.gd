@@ -35,6 +35,7 @@ func setSelCharacter(characterName: String):
 		if %CharacterSelect.get_item_text(index) == characterName:
 			%CharacterSelect.select(index)
 			_selectedCharacter = characterName
+			#TODO change the description etc.
 			return
 
 func getSelCharacter():
@@ -95,6 +96,26 @@ func addCharacter(characterName: String, chapterName: String):
 	if _selectedCharacter == "":
 		selectedCharacter = characterName
 		selectionChange.emit(_selectedCharacter, _selectedChapter)
+
+func removeCharacter(characterName):
+	var button: OptionButton = %CharacterSelect
+	var selectedIndex: int = button.get_item_index(button.get_selected_id())
+	assert(button.get_item_text(selectedIndex) == _selectedCharacter)
+	var adjust: int = 1
+	var names: Array = []
+	for index in range(button.item_count):
+		names.append(button.get_item_text(index))
+	button.clear()
+	for addbackCharacter in names:
+		if addbackCharacter == characterName:
+			adjust = 0 #if the unhidden character comes up first, it will be turned to +1 later
+		else:
+			button.add_item(addbackCharacter)
+		if addbackCharacter == _selectedCharacter:
+			adjust = 1 #if the selected character comes up first, it will be zeroed later
+	button.select(selectedIndex + adjust)
+	if _selectedCharacter == characterName:
+		setSelCharacter(button.get_item_text(selectedIndex + adjust))
 
 func _on_color_picker_button_color_changed(_color):
 	changeSaved = false

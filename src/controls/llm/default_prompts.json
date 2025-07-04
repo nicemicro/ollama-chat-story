@@ -12,6 +12,7 @@
 		"_start": [
 			"Please assist in writing this fictional story. Your response should be a single 
 			unformatted paragraph, in plain text. The details are given below.",
+
 			"You need to assist writing a work of fiction based on the following parameters. Please
 			keep in mind, that I will require a response that is, without exceptions, a single
 			unformatted paragraph, in plain text."
@@ -50,8 +51,9 @@
 			character speaking and a colon. The lines with narration start with the word
 			\"Narrator:\". Quotation marks or asterisk symbols migth be used to denote actions
 			in dialogue parts, or dialogue in narration parts.\n
-			%t\n%v\n
-			%t\n(End of the previous paragraphs)\n"
+			\"
+			%t\n%v
+			%t\n\"\n(End of the previous paragraphs)\n"
 		],
 		"current_context": [
 			"The current state of the plot, and the context for the part we are working on is
@@ -67,8 +69,28 @@
 			they always start with the word Narrator, followed by a colon (as in \"Narrator:\").
 			In case of a minor character speaking in a narration paragraph, enclose the speech
 			in quotation marks.\n
-			You should try to match the style of the preceeding paragraphs. Remember,
-			your response must contain only one paragraph you suggest to add to the story. This
+			Your response must contain only one paragraph you suggest to add to the story. This
+			single paragaph should be in plain unformatted text with no line breaks, and should
+			be narratively consistent with the preivous parts, but also novel, avoiding
+			repetitions.\n"
+		],
+		"_style_guide:Narrator": [
+			"When writing a new paragraph, you should follow the conventions of the paragraphs
+			already written. Narration paragraphs always start with the word Narrator, followed
+			by a colon and a space (as in \"Narrator: \"). It is acceptable for a minor character
+			to have dialogue in a narration paragraph which is enclosed in quotation marks.\n
+			Your response must contain only one paragraph you suggest to add to the story. This
+			single paragaph should be in plain unformatted text with no line breaks, and should
+			be narratively consistent with the preivous parts, but also novel, avoiding
+			repetitions.\n"
+		],
+		"_style_guide:%_": [
+			"When writing a new paragraph, you should follow the conventions of the paragraphs
+			already written. Dialogue starts with the name of the speaker followed by a colon and
+			a space, such as \"%_: \". The style of the text should be informed by %_'s personality.
+			Actions or the way of speech can be mentioned, enclosed in asterisks, and actions by
+			other characters should only be mentioned from %_'s perspective.\n
+			Your response must contain only one paragraph you suggest to add to the story. This
 			single paragaph should be in plain unformatted text with no line breaks, and should
 			be narratively consistent with the preivous parts, but also novel, avoiding
 			repetitions.\n"
@@ -85,34 +107,64 @@
 			dialogue parts starting with the name of the character speaking and a colon. The
 			lines with narration start with the word \"Narrator:\". Quotation marks or
 			asterisk symbols migth be used to denote actions in dialogue parts, or
-			dialogue in narration parts.\n
-			%t\n%v\n
-			%t\n(End of the paragraph listings)\n"
+			dialogue in narration parts. Paragraphs starting with \"SUMMARY\" are summarizing
+			previous sections of the story, which should also be included in the current summary,
+			but with lower priority, and should be prioritized less relative to the actual
+			narrations and dialogue.\n
+			\"
+			%t\n%v
+			%t\n\"\n(End of the paragraph listings)\n"
 		]
 	},
 	"instructions": {
 		"new_paragraph:Narrator": [
-			"Considering all the information listed above, now your job is to
-			write a single paragraph of narration. Your response should only be this paragraph.
+			"Considering all the information listed above, now your job is to write a single,
+			short paragraph of narration. Your response should only be this paragraph.
 			The response should start with \"Narrator: \" (without the quotation marks), and
-			followed by at least three (3), at maximum seven (7) sentences. This narration
+			followed by at least three (3), at maximum seven (7) sentences, , with the maximum of
+			1000 characters. This narration should propel the story forward by a reasonable degree,
+			without feeling rushed or forced.",
+
+			"Considering all the information listed above, now your job is to write a single,
+			short paragraph of narration. Your response should only be this paragraph.
+			The response should start with \"Narrator: \" (without the quotation marks), and
+			followed by at least one (1), at maximum four (4) sentences. This narration
 			should propel the story forward by a reasonable degree, without feeling rushed or
-			forced."
+			forced. Your character limit is 1000 characters.",
+
+			"Considering the context provided above, your job is to add a new paragraph with a few,
+			preferrebly between 3 and 7 sentences, as narration. Your response should be this
+			single paragraph, starting with \"Narrator: \" (without the quotation marks). These
+			sentences should continue a story by a little."
 		],
 		"new_paragraph:%_": [
-			"Considering all the information listed above, now your job is to write a single
+			"Considering all the information listed above, now your job is to write a single, short
 			new paragraph of dialogue from the chacarter named \"%_\". The response should start
 			with \"%_: \" (without the quotation marks), to signify that this is the %_ speaking,
-			and followed by at least three (3), at maximum seven (7) sentences. This paragraph
+			and followed by at least three (3), at maximum seven (7) sentences, with maximum 1000
+			characters. This paragraph is spoken by %_, and therefore should be in the style and
+			personality of %_. Your suggestion should propel the story forward.",
+
+			"Considering all the information listed above, now your job is to write a single, short
+			new paragraph of dialogue from the chacarter named \"%_\". The response should start
+			with \"%_: \" (without the quotation marks), to signify that this is the %_ speaking,
+			and followed by at least one (1), at maximum four (4) sentences. This paragraph
 			is spoken by %_, and therefore should be in the style and personality of %_. Your
-			suggestion should propel the story forward."
+			suggestion should propel the story forward. Your character limit is 1000 characters.",
+
+			"Considering the context provided above, your job is to add a new paragraph with a few,
+			preferrebly between 3 and 7 sentences, as part of the dialogue, spoken by \"%_\". Your
+			response should be this single paragraph, starting with \"%_: \" (without the quotation
+			marks). These sentences of dialouge should continue a story by a little Your character
+			limit is 1000 characters."
 		],
 		"expand_paragraph:Narrator": [
 			"Considering all the information listed above, now your job is to
 			write a single paragraph of narration based on the draft provided by the user. Your
 			response should only be this paragraph. The response should start with \"Narrator: \"
 			(without the quotation marks), to signify that this is narration, and followed by at
-			least three (3), at maximum seven (7) sentences, and should be based on the following
+			least three (3), at maximum seven (7) sentences, with the maximum of 1000 characters,
+			and should be based on the following
 			rough draft:
 			\n\"\nNarrator: %d\n\"\n
 			The paragraph you give as a response, should have the same rough structure as this
@@ -128,9 +180,9 @@
 			write a single paragraph of dialogue from the chacarter named \"%_\". Your response
 			should only be this paragraph. The response should start with \"%_: \", to signify that
 			this is the character speaking, and followed by at least three (3), at maximum seven
-			(7) sentences. This paragraph is spoken by %_, and therefore should be in the style
-			of %_, based on previous paragraphs and %_'s description, and should be based on the
-			following rough draft: \n\"\n%d\n\"\n
+			(7) sentences, 1000 characters. This paragraph is spoken by %_, and therefore should be
+			in the style of %_, based on previous paragraphs and %_'s description, and should be
+			based on the following rough draft: \n\"\n%d\n\"\n
 			The paragraph you give as a response, should have
 			the same rough structure as this draft, include the same points plotwise, but should be
 			rephrased and extended to improve style and add in details. You can mention the tone of
@@ -146,39 +198,46 @@
 			"Considering all the information listed above, now your job is to
 			continue the paragraph of narration provided by the user. Your response should only
 			contain the continuation of this paragraph. As in, you need to add your one to four
-			(1-4) sentences.\n
-			The few sentences you give as a response should be an organic continuation of the
-			paragraph of narration. Try to match the narration style of the preceeding paragraphs
-			while making sure that this paragraph stays consistent. You might add some short
-			dialogue by non-major characters, using quotation marks to show speech, but try
-			keeping that to the minimum.\nRemember, only give the 1 to 4 sentences to continue the
-			paragraph given by the user, and do not repeat the sentences given by the user. Here
-			is the paragraph you need to continue:\n\"\n%d\n\"\n
-			"
+			(1-4) sentences, with the character limit of 500 charactes. Here is the paragraph you
+			need to continue:
+			\n\"\n%d\n\"\n
+			Now, your reply should only contain the CONTINUATION of the narration paragraph. DO NOT
+			repeat the above text."
 		],
 		"continue_paragraph:%_": [
 			"Considering all the information listed above, now your job is to
 			continue the paragraph of dialogue from the chacarter named \"%_\". Your response
 			should only contain the continuation of this paragraph. As in, you need to add your one
-			to four (1-4) sentences.\n
-			The few sentences you give as a response should be an organic continuation of the
-			paragraph with the dialogue spoken by %_. You can mention the tone of the speech or
-			actions done by %_ during talking, but clearly separate those by using either the
-			asterisk or the quotation mark characters, matching how it was done in the
-			preceeding paragraphs. Avoid mixing asterisks with quotation marks. In this paragraph,
-			no other character should have a speaking role, and all active action should be taken
-			by %_, if other characters do something, that should be described from the view point
-			of %_.\nRemember, only give the 1 to 4 sentences to continue the
-			paragraph given by the user, and do not repeat the sentences given by the user. Here
-			is the paragraph you need to continue:\n\"\n%d\n\"\n"
+			to four (1-4) sentences and 500 characters, which should be an organic continuation of
+			the paragraph with the dialogue spoken by %_.\nHere is the paragraph you need to
+			continue:
+			\n\"\n%d\n\"\n
+			Now, your reply should only contain the CONTINUATION of the paragraph, with %_
+			speaking. DO NOT repeat the above text."
 		],
 		"paragraphs_summary": [
-			"Considering the paragraphs listed above, your job is to formulate a summary of the
-			events described there in a single paragraph in plain text. The summary you make should
-			start with the word \"SUMMARY: \" in all caps, and a colon, contain all major plot
-			elements and character development moments in about five (5) to twelve (12) sentences
-			Consider, that tis summary will be used in the future to generate more paragraphs for
-			the story, so it should be written to be helpful for the author."
+			"Considering the paragraphs listed above, your job is to formulate a consice summary of
+			the events described there in a single paragraph in plain text. The summary you make
+			should start with the word \"SUMMARY: \" in all caps, and a colon, contain all major
+			plot elements and character development moments in about four (4) to twelve (12)
+			sentences. Consider, that tis summary will be used in the future to generate more
+			paragraphs for the story, so it should be written to be helpful for the author.
+			Your character limit is 1000 characters.",
+
+			"Considering the paragraphs listed above, your job is to formulate a short summary of
+			the events described there in a single paragraph in plain text. The summary you make
+			should start with the word \"SUMMARY: \" in all caps, and a colon, contain all major
+			plot elements and character development moments in about three (3) to twelve (12)
+			sentences. Consider, that tis summary will be used in the future to generate more
+			paragraphs for the story, so it should be written to be helpful for the author.
+			Your character limit is 1000 characters."
+		],
+		"ask_question": [
+			"Considering the paragraphs presented above, answer the following question in
+			sufficient detail. Your answer will not be part of the story, you are only assisting
+			the writer. Keep your answer reasonably short, but exhaustive, less than twelve (12)
+			sentences, maximum 1500 characters. The question is as follows:\n
+			\"\n%d\n\""
 		]
 	},
 	"constructions": {
@@ -192,9 +251,12 @@
 		],
 		"continue_paragraph": [
 			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
-			"characters", "paragraphs", "current_context", "_style_guide", "last_paragraph"
+			"characters", "paragraphs", "current_context"
 		],
 		"paragraphs_summary": [
+			"_start", "paragraphs_summary"
+		],
+		"ask_question": [
 			"_start", "paragraphs_summary"
 		]
 	}

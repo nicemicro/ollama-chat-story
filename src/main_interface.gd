@@ -6,7 +6,6 @@ const generateButtonUID = "uid://bnr5ulamhqxp4"
 var model: String = ""
 var miscTools: Dictionary = {}
 var characters: Dictionary = {}
-var _narratorColor: Color = Color(0.1, 0.1, 0.1)
 
 func _ready():
 	for child in %MiscTools.get_children():
@@ -24,6 +23,7 @@ func connectChapterSignals(newChapter):
 	newChapter.hideCharacter.connect(_on_hideCharacter)
 	newChapter.unhideCharacter.connect(_on_unhideCharacter)
 	newChapter.openCharacterStory.connect(_on_openCharacterStory)
+	newChapter.deleteCharacter.connect(_on_deleteCharacter)
 	newChapter.paragraphCharacter.connect(_on_paragraphCharacter)
 	newChapter.paragrapAdded.connect(_on_paragraphAdded)
 	newChapter.summarizeParagraphs.connect(_on_paragraphSummary)
@@ -64,7 +64,7 @@ func sendChatMessage():
 		return
 	var activeChapter = %Chapters.get_current_tab_control()
 	newText = newText.replace("\n", " ").rstrip(" ")
-	var textColor: Color = _narratorColor
+	var textColor: Color = Globals.narratorColor
 	var characterId: int = %ChatWho.selected
 	var characterName: String = "Narrator"
 	if characterId != 0:
@@ -127,7 +127,7 @@ func llmParagraphGenerate(characterName: String):
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
 		"generate", prompt
 	)
-	var color: Color = _narratorColor
+	var color: Color = Globals.narratorColor
 	if characterName in characters:
 		color = characters[characterName]["color"]
 	chapterNode.addOllamaPragr(tunnel, characterName, color)
@@ -159,7 +159,9 @@ func llmParagraphExpand(paragrObject, text: String, characterName: String):
 	)
 	paragrObject.connectLlm(tunnel)
 
-func llmSummaryGenerate(paragraphList: Array, afterIndex: int):
+func llmSummaryGenerate(
+	paragraphList: Array, afterIndex: int, command: String, useDraft: bool
+):
 	assert(not paragraphList.is_empty())
 	if not %LLMControl.isLlmConnected():
 		%LlmNotConnDial.show()
@@ -167,14 +169,23 @@ func llmSummaryGenerate(paragraphList: Array, afterIndex: int):
 	var chapterNode = %Chapters.get_current_tab_control()
 	var dataPackage: Dictionary
 	var prompt: String
+	var draft: String = ""
+	var responseTypes: Dictionary = {
+		"paragraphs_summary": "SUMMARY",
+		"ask_question": "ANSWER"
+	}
+	if useDraft:
+		draft = %ChatInput.text
+		if draft.is_empty():
+			return
 	_gatherDataFromUi(dataPackage, chapterNode)
 	dataPackage["paragraphs_summary"] = paragraphList
-	prompt = %LLMControl.generatePrompt("", dataPackage, "paragraphs_summary")
+	prompt = %LLMControl.generatePrompt(draft, dataPackage, command)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
 		"generate", prompt
 	)
-	var color: Color = _narratorColor
-	chapterNode.addOllamaPragr(tunnel, "SUMMARY", color, afterIndex)
+	var color: Color = Globals.narratorColor
+	chapterNode.addOllamaPragr(tunnel, responseTypes[command], color, afterIndex)
 
 func on_chapterTitleChange(newTitle, object):
 	var idx: int = %Chapters.get_tab_idx_from_control(object)
@@ -193,6 +204,15 @@ func _on_openCharacterStory(character, chapter):
 			"color": characters[character]["color"]
 		}
 	)
+
+func _on_deleteCharacter(characterName: String, chapterName: String):
+	#TODO: this will DEFINITELY fail once we have multiple chapters though
+	if chapterName in characters[characterName]["chapters"]:
+		characters[characterName]["chapters"].erase(chapterName)
+	if characters[characterName]["chapters"].is_empty():
+		characters.erase(characterName)
+		miscTools["CharacterEditor"].removeCharacter(characterName)
+	#TODO: needs to remove the character name stuff from the chapter too
 
 func _on_addCharacter(character: String, chapter: String):
 	_addCharacter(character, chapter)
@@ -272,7 +292,9 @@ func _on_paragraphCharacter(characterName, chapter):
 		_on_addCharacter(characterName, chapter)
 	for child in %Chapters.get_children():
 		if child.chapterName == chapter:
-			var newColor: Color = characters[characterName]["color"]
+			var newColor: Color = Globals.narratorColor
+			if characterName in characters:
+				newColor = characters[characterName]["color"]
 			child.changeCharacterColor(characterName, newColor)
 			if newChar:
 				child.addFilledInCharater(characterName, newColor)
@@ -285,8 +307,10 @@ func _on_character_editor_character_change(text, newColor, character, chapter):
 	for child in %Chapters.get_children():
 		child.changeCharacterColor(character, newColor)
 
-func _on_paragraphSummary(paragraphList: Array, afterIndex: int):
-	llmSummaryGenerate(paragraphList, afterIndex)
+func _on_paragraphSummary(
+	paragraphList: Array, afterIndex: int, command: String, draft: bool = false
+):
+	llmSummaryGenerate(paragraphList, afterIndex, command, draft)
 
 func _on_llm_control_connection_severed():
 	for node in get_tree().get_nodes_in_group("llmButton"):
@@ -344,14 +368,11 @@ func loadScenario(fileName: String):
 			var packedScene = preload(chapterSceneUID)
 			var newChapter = packedScene.instantiate()
 			var title: String = ""
-			var paragraphs: Array = []
 			if "Title" in chapterData:
 				title = chapterData["Title"]
 			var background: String = ""
 			if "Background" in chapterData:
 				background = chapterData["Background"]
-			if "Paragraphs" in chapterData:
-				paragraphs = chapterData["Paragraphs"]
 			if "Characters" in chapterData:
 				for characterName in chapterData["Characters"]:
 					if not characterName in chapterCharacterMatrix:
@@ -360,10 +381,9 @@ func loadScenario(fileName: String):
 						chapterData["Characters"][characterName]
 					)
 			connectChapterSignals(newChapter)
-			newChapter.setBulkProperties(
-				chapterName, title, background, paragraphs
+			newChapter.setProperties(
+				chapterName, title, background
 			)
-			newChapter.changeCharacterColor("Narrator", Color(0.1, 0.1, 0.1))
 			%Chapters.add_child(newChapter)
 			var idx: int = %Chapters.get_tab_idx_from_control(newChapter)
 			%Chapters.set_tab_title(idx, chapterName)
@@ -404,6 +424,23 @@ func loadScenario(fileName: String):
 						not chapterCharacterMatrix[characterName][chapterName]
 					)
 					chapterNode.changeCharacterColor(characterName, characterColor)
+	if "ChapterData" in scenarioData:
+		for chapterName in scenarioData["ChapterData"]:
+			var chapterNode = null
+			for child in %Chapters.get_children():
+				if child.chapterName == chapterName:
+					chapterNode = child
+					break
+			if chapterNode != null and "Paragraphs" in scenarioData["ChapterData"][chapterName]:
+				var paragraphs: Array = scenarioData["ChapterData"][chapterName]["Paragraphs"]
+				for paragraph in paragraphs:
+					var paragrNode = chapterNode.addParagraph(paragraph, Globals.narratorColor)
+					var charName: String = paragrNode.paragrCharacter
+					if charName.to_lower() in Globals.nonCharParagrs:
+						continue
+					if charName not in characters:
+						continue
+					paragrNode.changeColor(characters[charName]["color"])
 	%LoadButton.disabled = true
 
 func loadColorFromText(text: String) -> Color:

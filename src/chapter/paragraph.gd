@@ -3,6 +3,7 @@ extends PanelContainer
 var _paragrText: String = ""
 var _paragrCharacter: String = ""
 var _formattedText: String = ""
+var _LlmFullReply: String = ""
 var paragrCharacter: String: get = getParagrCharacter, set = fail
 var paragrText: String: get = getParagrText, set = fail
 var bgColor: Color: get = getColor, set = changeColor
@@ -37,6 +38,8 @@ func setUpLlm(tunnel: LlmTunnel, characterName: String, newColor: Color, newIdea
 	_paragrCharacter = characterName
 	if _paragrCharacter == "SUMMARY":
 		size_flags_horizontal = Control.SIZE_SHRINK_END
+	elif _paragrCharacter == "ANSWER":
+		size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_tunnel = tunnel
 	_tunnel.streamOver.connect(_allReceived)
 	_tunnel.messageReceived.connect(_textReceived)
@@ -52,6 +55,7 @@ func connectLlm(tunnel: LlmTunnel):
 	_tunnel.streamOver.connect(_allReceived)
 	_tunnel.messageReceived.connect(_textReceived)
 	%EditButton.disabled = true
+	%ProgressBar.show()
 
 func changeColor(newColor: Color):
 	%ColorRect.color = newColor
@@ -71,6 +75,9 @@ func setIdealSize(newIdealSize: int):
 
 func setEditable(editable: bool):
 	%EditButton.disabled = not editable
+
+func setSelected(toSelect: bool):
+	%Selection.button_pressed = toSelect
 
 func _setSize():
 	%TextEdit.custom_minimum_size.x = _idealSize + 60
@@ -110,7 +117,11 @@ func _allReceived():
 	%ProgressBar.hide()
 	%ResponseWaitLab.hide()
 	%TextView.show()
+	_LlmFullReply = _paragrText
 	#remove the reasoning part and leave only the response for qwen.
+	if _paragrCharacter == "ANSWER":
+		_setUp()
+		return
 	if _paragrText.contains("</think>"):
 		_paragrText = _paragrText.get_slice("</think>", 1)
 	_paragrText = paragrText.rstrip("\n \t").lstrip("\n \t")
@@ -140,9 +151,10 @@ func _setUp():
 		_formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
 		_paragrCharacter = splitText[0]
 	else:
-		_paragrCharacter = "Narrator"
-		_formattedText = "[b]Narrator:[/b] " + _paragrText
-		_paragrText = "Narrator: " + _paragrText
+		if _paragrCharacter != "ANSWER":
+			_paragrCharacter = "Narrator"
+		_formattedText = "[b]" + _paragrCharacter + ":[/b] " + _paragrText
+		_paragrText = _paragrCharacter +": " + _paragrText
 	if _formattedText.contains(" *"):
 		var newFormText: String = ""
 		var startind: int = 0
@@ -168,6 +180,8 @@ func _setUp():
 		_formattedText = newFormText
 	if _paragrCharacter == "SUMMARY":
 		size_flags_horizontal = Control.SIZE_SHRINK_END
+	elif _paragrCharacter == "ANSWER":
+		size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	else:
 		size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	if not oldCharacter.is_empty() and _paragrCharacter != oldCharacter:
@@ -190,6 +204,9 @@ func _splitParagraph():
 
 func _ollamaContinue():
 	finishEdit()
+	_paragrText += " "
+	_formattedText += " "
+	%TextView.text = _formattedText
 	ollamaContinue.emit(self, _paragrText, _paragrCharacter)
 
 func _on_edit_button_pressed():
