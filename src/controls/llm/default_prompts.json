@@ -45,6 +45,13 @@
 			%t\n*%k*: %v\n
 			%t\n(End of the listing of characters)\n"
 		],
+		"summary": [
+			"To give you a sample of the earlier part of the story, what happened before the
+			current storyline is summarized here.\n
+			\"
+			%t\n%v
+			%t\n\"\n(End of summary)\n"
+		],
 		"paragraphs": [
 			"To give you a sample of the story, previous paragraphs before the part you
 			need to work on are listed here, with dialogue parts starting with the name of the
@@ -102,7 +109,7 @@
 			%t\n%v\n
 			%t\n(End of the last paragraph)\n"
 		],
-		"paragraphs_summary": [
+		"paragraphs_summaries": [
 			"Your job here is to summarize the following paragraphs listed below, with
 			dialogue parts starting with the name of the character speaking and a colon. The
 			lines with narration start with the word \"Narrator:\". Quotation marks or
@@ -143,20 +150,22 @@
 			with \"%_: \" (without the quotation marks), to signify that this is the %_ speaking,
 			and followed by at least three (3), at maximum seven (7) sentences, with maximum 1000
 			characters. This paragraph is spoken by %_, and therefore should be in the style and
-			personality of %_. Your suggestion should propel the story forward.",
+			personality of %_, with no other characters speaking. Your suggestion should propel
+			the story forward.",
 
 			"Considering all the information listed above, now your job is to write a single, short
 			new paragraph of dialogue from the chacarter named \"%_\". The response should start
 			with \"%_: \" (without the quotation marks), to signify that this is the %_ speaking,
 			and followed by at least one (1), at maximum four (4) sentences. This paragraph
-			is spoken by %_, and therefore should be in the style and personality of %_. Your
-			suggestion should propel the story forward. Your character limit is 1000 characters.",
+			is spoken by %_, and therefore should be in the style and personality of %_ (and no
+			other character should speak). Your suggestion should propel the story forward. Your
+			character limit is 1000 characters.",
 
 			"Considering the context provided above, your job is to add a new paragraph with a few,
-			preferrebly between 3 and 7 sentences, as part of the dialogue, spoken by \"%_\". Your
-			response should be this single paragraph, starting with \"%_: \" (without the quotation
-			marks). These sentences of dialouge should continue a story by a little Your character
-			limit is 1000 characters."
+			preferrebly between 3 and 7 sentences, as part of the dialogue, spoken only by \"%_\".
+			Your response should be this single paragraph, starting with \"%_: \" (without the
+			quotation marks). These sentences of dialouge should continue a story by a little. Your
+			character limit is 1000 characters."
 		],
 		"expand_paragraph:Narrator": [
 			"Considering all the information listed above, now your job is to
@@ -218,46 +227,54 @@
 		"paragraphs_summary": [
 			"Considering the paragraphs listed above, your job is to formulate a consice summary of
 			the events described there in a single paragraph in plain text. The summary you make
-			should start with the word \"SUMMARY: \" in all caps, and a colon, contain all major
-			plot elements and character development moments in about four (4) to twelve (12)
+			should start with the word \"SUMMARY^1: \" in all caps, and a colon, contain all major
+			plot elements and character development moments in about two (2) to eight (8)
 			sentences. Consider, that tis summary will be used in the future to generate more
 			paragraphs for the story, so it should be written to be helpful for the author.
 			Your character limit is 1000 characters.",
-
-			"Considering the paragraphs listed above, your job is to formulate a short summary of
+		],
+		"summary_summary": [
+			"Considering the summyary listed above, your job is to formulate a consice summary of
 			the events described there in a single paragraph in plain text. The summary you make
-			should start with the word \"SUMMARY: \" in all caps, and a colon, contain all major
-			plot elements and character development moments in about three (3) to twelve (12)
+			should start with the word \"SUMMARY^2: \" in all caps, and a colon, contain all major
+			plot elements and character development moments in about two (2) to eight (8)
 			sentences. Consider, that tis summary will be used in the future to generate more
 			paragraphs for the story, so it should be written to be helpful for the author.
-			Your character limit is 1000 characters."
+			Your character limit is 1000 characters.",
 		],
 		"ask_question": [
 			"Considering the paragraphs presented above, answer the following question in
 			sufficient detail. Your answer will not be part of the story, you are only assisting
 			the writer. Keep your answer reasonably short, but exhaustive, less than twelve (12)
-			sentences, maximum 1500 characters. The question is as follows:\n
+			sentences, maximum 1500 characters, unless the user specifies the format and desired
+			length of the answer. In that case, follow the instructions enclosed in with the
+			question.\nThe question is as follows:\n
 			\"\n%d\n\""
 		]
 	},
 	"constructions": {
 		"new_paragraph": [
 			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
-			"characters", "paragraphs", "current_context", "_style_guide", "last_paragraph"
+			"characters", "summary", "paragraphs", "current_context", "_style_guide",
+			"last_paragraph"
 		],
 		"expand_paragraph": [
 			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
-			"characters", "paragraphs", "current_context", "_style_guide", "last_paragraph"
+			"characters", "summary", "paragraphs", "current_context", "_style_guide",
+			"last_paragraph"
 		],
 		"continue_paragraph": [
 			"_start", "title", "scenario", "chapter_title", "chapter_scenario",
-			"characters", "paragraphs", "current_context"
+			"characters", "summary", "paragraphs", "current_context"
 		],
 		"paragraphs_summary": [
-			"_start", "paragraphs_summary"
+			"_start", "paragraphs_summaries"
+		],
+		"summary_summary": [
+			"_start", "summary"
 		],
 		"ask_question": [
-			"_start", "paragraphs_summary"
+			"_start", "paragraphs_summaries"
 		]
 	}
 }

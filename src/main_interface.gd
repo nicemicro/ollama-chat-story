@@ -27,6 +27,7 @@ func connectChapterSignals(newChapter):
 	newChapter.paragraphCharacter.connect(_on_paragraphCharacter)
 	newChapter.paragrapAdded.connect(_on_paragraphAdded)
 	newChapter.summarizeParagraphs.connect(_on_paragraphSummary)
+	newChapter.summarizeSummaries.connect(_on_paragraphSummary)
 
 func _input(event):
 	if not is_node_ready():
@@ -103,6 +104,13 @@ func _gatherCharacters(dataPackage: Dictionary, chapterNode):
 				characters[suppCharName]["chapters"][chapterName]
 			)
 
+func extractSummary(allParagrs: Array, summaries: Array, paragraphs: Array):
+	for paragraphText in allParagrs:
+		if paragraphText.begins_with("SUMMARY") and ":" in paragraphText:
+			summaries.push_back(paragraphText.split(":", false, 2)[1])
+		else:
+			paragraphs.push_back(paragraphText)
+
 func llmParagraphGenerate(characterName: String):
 	if not %LLMControl.isLlmConnected():
 		%LlmNotConnDial.show()
@@ -117,11 +125,18 @@ func llmParagraphGenerate(characterName: String):
 		draft = %ChatInput.text.replace("\n", " ")
 		instruction = "expand_paragraph"
 	_gatherCharacters(dataPackage, chapterNode)
-	dataPackage["paragraphs"] = chapterNode.getParagraphs()
+	dataPackage["paragraphs_summaries"] = chapterNode.getParagraphs()
+	dataPackage["paragraphs"] = []
+	dataPackage["summary"] = []
+	extractSummary(
+		dataPackage["paragraphs_summaries"], dataPackage["summary"], dataPackage["paragraphs"]
+	)
 	if not dataPackage["paragraphs"].is_empty():
 		dataPackage["last_paragraph"] = dataPackage["paragraphs"].pop_back()
 	if dataPackage["paragraphs"].is_empty():
 		dataPackage.erase("paragraphs")
+	if dataPackage["summary"].is_empty():
+		dataPackage.erase("summary")
 	instruction += ":" + characterName
 	prompt = %LLMControl.generatePrompt(draft, dataPackage, instruction)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
@@ -171,7 +186,8 @@ func llmSummaryGenerate(
 	var prompt: String
 	var draft: String = ""
 	var responseTypes: Dictionary = {
-		"paragraphs_summary": "SUMMARY",
+		"paragraphs_summary": "SUMMARY^1",
+		"summary_summary": "SUMMARY^2",
 		"ask_question": "ANSWER"
 	}
 	if useDraft:
@@ -179,7 +195,18 @@ func llmSummaryGenerate(
 		if draft.is_empty():
 			return
 	_gatherDataFromUi(dataPackage, chapterNode)
-	dataPackage["paragraphs_summary"] = paragraphList
+	dataPackage["paragraphs_summaries"] = paragraphList
+	dataPackage["paragraphs"] = []
+	dataPackage["summary"] = []
+	extractSummary(
+		dataPackage["paragraphs_summaries"], dataPackage["summary"], dataPackage["paragraphs"]
+	)
+	if not dataPackage["paragraphs"].is_empty():
+		dataPackage["last_paragraph"] = dataPackage["paragraphs"].pop_back()
+	if dataPackage["paragraphs"].is_empty():
+		dataPackage.erase("paragraphs")
+	if dataPackage["summary"].is_empty():
+		dataPackage.erase("summary")
 	prompt = %LLMControl.generatePrompt(draft, dataPackage, command)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
 		"generate", prompt
@@ -285,9 +312,12 @@ func _unhideCharFromButt(character: String, button: OptionButton, default: Strin
 			button.add_item(characterButton.text)
 	button.select(selectedIndex + adjust)
 
-func _on_paragraphCharacter(characterName, chapter):
+func _on_paragraphCharacter(characterName: String, chapter):
 	var newChar: bool = false
-	if characterName != "Narrator" and not characterName in characters:
+	if (
+		not characterName.to_lower() in Globals.nonCharParagrs and
+		not characterName in characters
+	):
 		newChar = true
 		_on_addCharacter(characterName, chapter)
 	for child in %Chapters.get_children():
@@ -362,6 +392,8 @@ func loadScenario(fileName: String):
 		%TitleEdit.text = scenarioData["Title"]
 	if "Outline" in scenarioData:
 		%ScenarioEdit.text = scenarioData["Outline"]
+	if "Context" in scenarioData:
+		%ContextEdit.text = scenarioData["Context"]
 	if "ChapterData" in scenarioData:
 		for chapterName in scenarioData["ChapterData"]:
 			var chapterData = scenarioData["ChapterData"][chapterName]

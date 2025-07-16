@@ -89,12 +89,14 @@ initial_position = 4
 ok_button_text = "Delete"
 dialog_text = "You will be deleting the selected paragraphs from the story. There is no undo button in this software."
 
-[node name="SummarizeParagraphs" type="Button" parent="ScrollContainer/List/ParagraphOptions"]
+[node name="SummarizeParagraphs" type="Button" parent="ScrollContainer/List/ParagraphOptions" groups=["llmButton"]]
 layout_mode = 2
+disabled = true
 text = "Summarize"
 
-[node name="LlmQuestion" type="Button" parent="ScrollContainer/List/ParagraphOptions"]
+[node name="LlmQuestion" type="Button" parent="ScrollContainer/List/ParagraphOptions" groups=["llmButton"]]
 layout_mode = 2
+disabled = true
 text = "Ask a question"
 
 [node name="LllmQuestionInfo" type="ConfirmationDialog" parent="ScrollContainer/List/ParagraphOptions/LlmQuestion"]

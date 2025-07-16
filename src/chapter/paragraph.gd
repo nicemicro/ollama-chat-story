@@ -178,7 +178,7 @@ func _setUp():
 			prevFinishind = finishind + 1
 			startind = finishind + 1
 		_formattedText = newFormText
-	if _paragrCharacter == "SUMMARY":
+	if _paragrCharacter.begins_with("SUMMARY"):
 		size_flags_horizontal = Control.SIZE_SHRINK_END
 	elif _paragrCharacter == "ANSWER":
 		size_flags_horizontal = Control.SIZE_SHRINK_CENTER

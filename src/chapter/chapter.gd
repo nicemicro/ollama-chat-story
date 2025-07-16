@@ -7,6 +7,7 @@ const characterNameSceneUID = "uid://xss4d30ho6ir"
 var _tunnels: Array = []
 var _selectedParagrs: Array = []
 var _needToSummarize: int = -1
+var _unsummedSums: int = 0
 var _llmQuestionShown: bool = false
 
 signal chapterTitleChange(chapterTitle, chapterObject)
@@ -18,6 +19,7 @@ signal unhideCharacter(character: String)
 signal paragrapAdded(paragraphNode)
 signal paragraphCharacter(characterName: String, chapterName: String)
 signal summarizeParagraphs(paragraphList: Array, insertAfter: int)
+signal summarizeSummaries(summaryList: Array, insertAfter: int)
 
 func _ready():
 	addEmptyCharacter()
@@ -40,17 +42,23 @@ func getParagraphs(startIndex: int = -1, maxlength: int = 10000) -> Array:
 		parindex = %StoryParagraphs.get_child_count() - 1
 	var length: int = 0
 	var summaryNeeded: int = _needToSummarize
+	_unsummedSums = 0
 	while length < maxlength and parindex >= 0:
 		var paragraphNode = %StoryParagraphs.get_child(parindex)
 		parindex -= 1
 		if paragraphNode.paragrCharacter == "ANSWER":
 			continue
+		if paragraphNode.paragrCharacter.begins_with("SUMMARY"):
+			_unsummedSums += 1
+		if _unsummedSums > 0 and not paragraphNode.paragrCharacter.begins_with("SUMMARY"):
+			continue
 		paragrList.push_front(paragraphNode.paragrText.replace("\n", " "))
 		length += len(paragraphNode.paragrText)
 		if length > maxlength * 0.6:
 			summaryNeeded = max(parindex, summaryNeeded)
-		if paragraphNode.paragrCharacter == "SUMMARY":
+		if paragraphNode.paragrCharacter == "SUMMARY^2":
 			break
+	print_debug(length, ", ", _needToSummarize, ", ", summaryNeeded)
 	if length > maxlength * 0.85:
 		_needToSummarize = max(_needToSummarize, summaryNeeded)
 	return paragrList
@@ -74,6 +82,8 @@ func _removeTunnel(activeTunnel: LlmTunnel):
 	_tunnels.erase(activeTunnel)
 	if _needToSummarize != -1:
 		_requestAutoSummary()
+	elif _unsummedSums > 3:
+		_requestAutoSumSum()
 
 func _requestAutoSummary():
 	var parindex: int = %StoryParagraphs.get_child_count()
@@ -81,14 +91,34 @@ func _requestAutoSummary():
 	while parindex > 0:
 		parindex -= 1
 		var paragraphNode = %StoryParagraphs.get_child(parindex)
+		if paragraphNode.paragrCharacter.begins_with("SUMMARY"):
+			break
 		if parindex <= _needToSummarize:
 			paragraphList.push_front(paragraphNode.paragrText)
-		if paragraphNode.paragrCharacter == "SUMMARY":
-			break
 	if len(paragraphList) < 4:
 		return
 	summarizeParagraphs.emit(paragraphList, _needToSummarize+1, "paragraphs_summary")
 	_needToSummarize = -1
+
+func _requestAutoSumSum():
+	var parindex: int = %StoryParagraphs.get_child_count()
+	var paragraphList: Array = []
+	var place = -1
+	while parindex > 0:
+		parindex -= 1
+		var paragraphNode = %StoryParagraphs.get_child(parindex)
+		if not paragraphNode.paragrCharacter.begins_with("SUMMARY"):
+			continue
+		if place == -1:
+			place = parindex
+			continue
+		paragraphList.push_front(paragraphNode.paragrText)
+		if paragraphNode.paragrCharacter == "SUMMARY^2":
+			break
+	if len(paragraphList) < 2:
+		return
+	summarizeSummaries.emit(paragraphList, place, "summary_summary")
+	_unsummedSums = 0
 
 func addParagraph(text: String, color: Color, where: int = -1):
 	var packedScene = preload(paragraphSceneUID)
@@ -106,6 +136,8 @@ func addParagraph(text: String, color: Color, where: int = -1):
 		_scrollBottomDeferred()
 	else:
 		%StoryParagraphs.move_child(newParagraph, where)
+	if _unsummedSums > 3:
+		_requestAutoSumSum()
 	return newParagraph
 
 func addParagraphAfter(paragrAfterNode, text: String, after: bool):

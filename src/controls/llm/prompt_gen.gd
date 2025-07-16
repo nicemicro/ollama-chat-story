@@ -33,6 +33,7 @@ func fail(_value):
 func generatePrompt(draft: String, dataPackage: Dictionary, instruction: String) -> String:
 	var prompt: String = ""
 	var character: String = ""
+	#print_debug(instruction)
 	if instruction.contains(":"):
 		character = instruction.get_slice(":", 1)
 		instruction = instruction.get_slice(":", 0)
@@ -46,6 +47,7 @@ func generatePrompt(draft: String, dataPackage: Dictionary, instruction: String)
 				prompt += _prompts[key].pick_random() + "\n"
 		if key in dataPackage:
 			prompt += _promptPartConstruct(_prompts[key].pick_random(), dataPackage[key]) + "\n"
+			#print_debug("  >" + key)
 	var instructionPrompt: String
 	if instruction + ":" + character in _instructions:
 		instructionPrompt = _instructions[instruction + ":" + character].pick_random()
