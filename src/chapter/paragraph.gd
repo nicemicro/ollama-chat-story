@@ -120,6 +120,11 @@ func _allReceived():
 	_LlmFullReply = _paragrText
 	#remove the reasoning part and leave only the response for qwen.
 	if _paragrCharacter == "ANSWER":
+		if _paragrText.contains("</think>"):
+			var reasoning: String = _paragrText.get_slice("</think>", 0)
+			_paragrText = _paragrText.get_slice("</think>", 1)
+			_paragrText = paragrText.rstrip("\n \t").lstrip("\n \t")
+			_paragrText += ("\n\n" + reasoning + "</think>")
 		_setUp()
 		return
 	if _paragrText.contains("</think>"):
@@ -146,8 +151,12 @@ func _allReceived():
 
 func _setUp():
 	var oldCharacter: String = _paragrCharacter
-	if _paragrText.contains(":"):
-		var splitText = _paragrText.split(":", true, 1)
+	var splitText = _paragrText.split(":", true, 1)
+	if (
+		_paragrText.contains(":") and
+		splitText[0].count(" ") < 4 and
+		len(splitText[0])<20
+	):
 		_formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
 		_paragrCharacter = splitText[0]
 	else:

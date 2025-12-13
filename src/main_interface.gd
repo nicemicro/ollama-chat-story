@@ -157,14 +157,15 @@ func llmParagraphExpand(paragrObject, text: String, characterName: String):
 	var instruction: String = "continue_paragraph"
 	_gatherDataFromUi(dataPackage, chapterNode)
 	_gatherCharacters(dataPackage, chapterNode)
-	if "characters" not in dataPackage:
-		dataPackage["characters"] = {
-			characterName: characters[characterName]["chapters"][chapterNode.chapterName]
-		}
-	if characterName not in dataPackage["characters"]:
-		dataPackage["characters"][characterName] = (
-			characters[characterName]["chapters"][chapterNode.chapterName]
-		)
+	if characterName.to_lower() != "narrator":
+		if "characters" not in dataPackage:
+			dataPackage["characters"] = {
+				characterName: characters[characterName]["chapters"][chapterNode.chapterName]
+			}
+		if characterName not in dataPackage["characters"]:
+			dataPackage["characters"][characterName] = (
+				characters[characterName]["chapters"][chapterNode.chapterName]
+			)
 	if paragrObject.get_index() > 0:
 		dataPackage["paragraphs"] = chapterNode.getParagraphs(paragrObject.get_index()-1)
 	instruction += ":" + characterName

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b1rkmrq24fmgw"]
 
-[ext_resource type="Script" uid="uid://hf41rjugd4u1" path="res://http/api_access.gd" id="1_m6k1u"]
+[ext_resource type="Script" uid="uid://hf41rjugd4u1" path="res://http/api_access.gd" id="1_vvidi"]
 
 [node name="Api-access" type="Node"]
-script = ExtResource("1_m6k1u")
+script = ExtResource("1_vvidi")

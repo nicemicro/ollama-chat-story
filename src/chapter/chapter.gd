@@ -54,13 +54,23 @@ func getParagraphs(startIndex: int = -1, maxlength: int = 10000) -> Array:
 			continue
 		paragrList.push_front(paragraphNode.paragrText.replace("\n", " "))
 		length += len(paragraphNode.paragrText)
-		if length > maxlength * 0.6:
+		if length > maxlength * 0.4:
 			summaryNeeded = max(parindex, summaryNeeded)
 		if paragraphNode.paragrCharacter == "SUMMARY^2":
 			break
-	print_debug(length, ", ", _needToSummarize, ", ", summaryNeeded)
-	if length > maxlength * 0.85:
+	#print_debug(
+		#length, ", ", _needToSummarize,
+		#", summaryNeeded: ", summaryNeeded,
+		#", parindex: ", parindex,
+		#" maxl: ", maxlength * 0.9
+	#)
+	if length > maxlength * 0.9:
 		_needToSummarize = max(_needToSummarize, summaryNeeded)
+		#print_debug(length, ", ", _needToSummarize, ", ", summaryNeeded)
+	elif length < maxlength * 0.8:
+		#print_debug("zero the unsummed sums, ", _unsummedSums)
+		_unsummedSums = 0
+	#print_debug(_unsummedSums)
 	return paragrList
 
 func addOllamaPragr(tunnel: LlmTunnel, characterName: String, color: Color, where: int = -1):

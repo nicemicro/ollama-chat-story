@@ -127,6 +127,7 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Additional context that the LLM should consider"
+wrap_mode = 1
 
 [node name="AdditionalButtons" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
 layout_mode = 2
