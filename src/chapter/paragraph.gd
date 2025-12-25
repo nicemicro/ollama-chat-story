@@ -2,6 +2,7 @@ extends PanelContainer
 
 var _paragrText: String = ""
 var _paragrCharacter: String = ""
+var _reasoningText: String = ""
 var _formattedText: String = ""
 var _LlmFullReply: String = ""
 var paragrCharacter: String: get = getParagrCharacter, set = fail
@@ -83,26 +84,24 @@ func _setSize():
 	%TextEdit.custom_minimum_size.x = _idealSize + 60
 	var length: int = _paragrText.length()
 	%TextView.custom_minimum_size = Vector2(min(_idealSize, length*10), 0)
+	if not %ThinkingContainer.visible:
+		return
+	%ReasoningText.custom_minimum_size.x = _idealSize + 60
+	length = _reasoningText.length()
+	%ReasoningText.custom_minimum_size = Vector2(min(_idealSize, length*10), 0)
 
-func _textReceived(textChunk: String, _role: String, _api: String, _model: String):
+func _textReceived(
+	textChunk: String, textType: String, _role: String, _api: String, _model: String
+):
 	%ResponseWaitLab.hide()
 	%TextView.show()
-	_paragrText += textChunk
-	#This following condition is if a "reasoning model" such as qwen is used.
-	#I have no idea if other "reasoning models" use a similar tagging for their
-	#thinking part, but I'm running with this here, hardcoding that.
-	if _paragrText.begins_with("<think>"):
-		_formattedText = "[i]" + _paragrText
-		if _formattedText.contains("</think>"):
-			var splitText = _formattedText.split("</think>", true, 1)
-			var reply = splitText[1].lstrip("\n \t")
-			if reply.contains(":"):
-				var splitText2 = reply.split(":", true, 1)
-				reply = "[b]" + splitText2[0] + ":[/b]" + splitText2[1]
-			_formattedText = splitText[0] + "[/i] \n" + reply
-		%TextView.text = _formattedText
-		%TextEdit.text = _paragrText
-		return
+	if textType == "thinking":
+		_reasoningText += textChunk
+		%ThinkingContainer.show()
+		%ShowReasonSwitch.show()
+		%ShowReasonSwitch.set_pressed_no_signal(true)
+	else:
+		_paragrText += textChunk
 	if _paragrText.contains(":"):
 		var splitText = _paragrText.split(":", true, 1)
 		_formattedText = "[b]" + splitText[0] + ":[/b]" + splitText[1]
@@ -110,6 +109,7 @@ func _textReceived(textChunk: String, _role: String, _api: String, _model: Strin
 		_formattedText = _paragrText
 	%TextView.text = _formattedText
 	%TextEdit.text = _paragrText
+	%ReasoningText.text = _reasoningText
 
 func _allReceived():
 	_tunnel = null
@@ -261,3 +261,6 @@ func _on_text_edit_text_changed():
 	if %TextEdit.text.ends_with("\t"):
 		_ollamaContinue()
 		return
+
+func _on_show_reason_switch_toggled(toggled_on: bool):
+	%ThinkingContainer.visible = toggled_on

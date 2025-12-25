@@ -136,7 +136,7 @@ func _sendGenerateToOllama(message: String, tunnel: LlmTunnel):
 		}
 	, "api/generate")
 
-func _messageFromOllama(_a, _b, _c, _d):
+func _messageFromOllama(_a, _b, _c, _d, _e):
 	call_deferred("scrollBottom")
 
 func _ollamaStreamDone():

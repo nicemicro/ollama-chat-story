@@ -5,7 +5,9 @@ var _id: int = -1
 var _autoDisconnect: bool = true
 
 signal responseReceived(wholeMsg: Dictionary)
-signal messageReceived(textChunk: String, role: String, api: String, model: String)
+signal messageReceived(
+	textChunk: String, textType: String, role: String, api: String, model: String
+)
 signal streamOver()
 
 func _init(apiAccess = null, autodisconnect: bool = true):
@@ -32,7 +34,6 @@ func setId(newId: int):
 
 func receiveMessage(chunk: String):
 	var modelName: String = "[Unknown]"
-	var message: String = ""
 	var role: String = "assistant"
 	var api: String = "chat"
 	chunk = "[" + chunk + "]"
@@ -44,17 +45,19 @@ func receiveMessage(chunk: String):
 		if "model" in dataDict:
 			modelName = dataDict["model"]
 		if "message" in dataDict:
-			message = dataDict["message"]["content"]
+			var message: String = dataDict["message"]["content"]
 			role = dataDict["message"]["role"]
-		if "response" in dataDict:
+			if message.length() > 0:
+				messageReceived.emit(message, "response", role, api, modelName)
+			if "thinking" in dataDict["message"]:
+				message = dataDict["message"]["thinking"]
+				if message.length() > 0:
+					messageReceived.emit(message, "thinking", role, api, modelName)
+		if "response" in dataDict and dataDict["response"].length() > 0:
 			api = "generate"
-			message = dataDict["response"]
-		messageReceived.emit(
-			message,
-			role,
-			api,
-			modelName
-		)
+			messageReceived.emit(dataDict["response"], "response", role, api, modelName)
+		if "thinking" in dataDict and dataDict["thinking"].length() > 0:
+			messageReceived.emit(dataDict["thinking"], "thinking", role, api, modelName)
 		if "done" not in dataDict or dataDict["done"]:
 			streamOver.emit()
 			if _autoDisconnect:

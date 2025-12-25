@@ -170,7 +170,7 @@ func scrollBottom():
 		"scroll_vertical", %ScrollStory.get_v_scroll_bar().max_value
 	)
 
-func _scrollBottomDeferred(_a = null, _b = null, _c = null, _d = null):
+func _scrollBottomDeferred(_a = null, _b = null, _c = null, _d = null, _e = null):
 	call_deferred("scrollBottom")
 
 func addEmptyCharacter():

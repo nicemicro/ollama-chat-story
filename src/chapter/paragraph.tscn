@@ -20,6 +20,22 @@ size_flags_vertical = 0
 [node name="TextContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 
+[node name="ThinkingContainer" type="VBoxContainer" parent="HBoxContainer/TextContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ReasoningText" type="RichTextLabel" parent="HBoxContainer/TextContainer/ThinkingContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(550, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.8053349, 0.81876326, 0.74719775, 1)
+fit_content = true
+scroll_active = false
+horizontal_alignment = 3
+justification_flags = 35
+
 [node name="TextView" type="RichTextLabel" parent="HBoxContainer/TextContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(550, 0)
@@ -58,6 +74,14 @@ editor_preview_indeterminate = false
 [node name="ButtonsContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 
+[node name="ShowReasonSwitch" type="CheckButton" parent="HBoxContainer/ButtonsContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Shows reasoning from reasoning models."
+button_pressed = true
+text = "Thought"
+
 [node name="Selection" type="CheckBox" parent="HBoxContainer/ButtonsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -95,6 +119,7 @@ dialog_text = "This paragraph contains no line breaks.
 Press <Enter> in the middle of the text where you want to separate first."
 
 [connection signal="text_changed" from="HBoxContainer/TextContainer/TextEdit" to="." method="_on_text_edit_text_changed"]
+[connection signal="toggled" from="HBoxContainer/ButtonsContainer/ShowReasonSwitch" to="." method="_on_show_reason_switch_toggled"]
 [connection signal="toggled" from="HBoxContainer/ButtonsContainer/Selection" to="." method="_on_selection_toggled"]
 [connection signal="pressed" from="HBoxContainer/ButtonsContainer/EditButton" to="." method="_on_edit_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonsContainer/DoneButton" to="." method="_on_done_button_pressed"]
