@@ -12,100 +12,100 @@ script = ExtResource("2_ah6jq")
 [node name="Label" parent="VBoxContainer/HBoxContainer" index="0"]
 text = "LLM Control"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Main" index="0"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main" index="0"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SubWindows" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer" index="0"]
+[node name="SubWindows" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer" index="0"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Connections" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="0"]
+[node name="Connections" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="0"]
 layout_mode = 2
 
-[node name="TitleBar" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="0" instance=ExtResource("3_o8np1")]
+[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="0" instance=ExtResource("3_o8np1")]
 layout_mode = 2
 
-[node name="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar/HBoxContainer" index="0"]
+[node name="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar/HBoxContainer" index="0"]
 text = "Connections"
 
-[node name="OllamaUrl" type="LineEdit" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="1"]
+[node name="OllamaUrl" type="LineEdit" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="1"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "localhost:11434"
 
-[node name="ConnectButt" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="2"]
+[node name="ConnectButt" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="2"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Connect to Ollama"
 
-[node name="DisconnectButt" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="3"]
+[node name="DisconnectButt" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="3"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "Disconnect Ollama"
 
-[node name="StatusLabel" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="4"]
+[node name="StatusLabel" type="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="4"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Status: disconnected"
 
-[node name="SelectModel" type="OptionButton" parent="VBoxContainer/Main/ScrollContainer/SubWindows/Connections" index="5"]
+[node name="SelectModel" type="OptionButton" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="5"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PromptSetup" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="1"]
+[node name="PromptSetup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="1"]
 layout_mode = 2
 
-[node name="TitleBar" parent="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="0" instance=ExtResource("3_o8np1")]
+[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="0" instance=ExtResource("3_o8np1")]
 layout_mode = 2
 
-[node name="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar/HBoxContainer" index="0"]
+[node name="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar/HBoxContainer" index="0"]
 text = "Prompt setup"
 
-[node name="PromptGen" parent="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="1" instance=ExtResource("4_yi1m5")]
+[node name="PromptGen" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="1" instance=ExtResource("4_yi1m5")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="DirectMsgSend" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="2"]
+[node name="DirectMsgSend" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="2"]
 layout_mode = 2
 
-[node name="TitleBar" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="0" instance=ExtResource("3_o8np1")]
+[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="0" instance=ExtResource("3_o8np1")]
 layout_mode = 2
 
-[node name="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar/HBoxContainer" index="0"]
+[node name="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar/HBoxContainer" index="0"]
 text = "Send direct message"
 
-[node name="DirectMsgText" type="TextEdit" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="1"]
+[node name="DirectMsgText" type="TextEdit" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="1"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_vertical = 3
 wrap_mode = 1
 
-[node name="DirectMsgSend" type="Button" parent="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="2"]
+[node name="DirectMsgSend" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="2"]
 layout_mode = 2
 text = "Send to LLM"
 
-[node name="LLMResponseList" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows" index="3"]
+[node name="LLMResponseList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="3"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="0"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="0"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="1"]
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="1"]
 layout_mode = 2
 text = "LLM responses"
 
-[node name="LLMScroll" type="ScrollContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="2"]
+[node name="LLMScroll" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LLMResponses" type="VBoxContainer" parent="VBoxContainer/Main/ScrollContainer/SubWindows/LLMResponseList/LLMScroll" index="0"]
+[node name="LLMResponses" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList/LLMScroll" index="0"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -114,18 +114,18 @@ size_flags_vertical = 3
 [node name="ApiAccess" parent="." index="1" instance=ExtResource("3_ah6jq")]
 unique_name_in_owner = true
 
-[connection signal="hidePressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_hide_pressed"]
-[connection signal="openPressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_open_pressed"]
-[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/ConnectButt" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/DisconnectButt" to="." method="_on_disconnect_butt_pressed"]
-[connection signal="hidePressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar" to="." method="_on_title_bar_hide_pressed"]
-[connection signal="openPressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar" to="." method="_on_title_bar_open_pressed"]
-[connection signal="hidePressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar" to="." method="_on_title_bar_hide_pressed"]
-[connection signal="openPressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar" to="." method="_on_title_bar_open_pressed"]
-[connection signal="pressed" from="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/DirectMsgSend" to="." method="_on_direct_msg_send_pressed"]
+[connection signal="hidePressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_hide_pressed"]
+[connection signal="openPressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_open_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/ConnectButt" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/DisconnectButt" to="." method="_on_disconnect_butt_pressed"]
+[connection signal="hidePressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar" to="." method="_on_title_bar_hide_pressed"]
+[connection signal="openPressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar" to="." method="_on_title_bar_open_pressed"]
+[connection signal="hidePressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar" to="." method="_on_title_bar_hide_pressed"]
+[connection signal="openPressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar" to="." method="_on_title_bar_open_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/DirectMsgSend" to="." method="_on_direct_msg_send_pressed"]
 [connection signal="connectionSuccess" from="ApiAccess" to="." method="_on_api_access_connection_success"]
 [connection signal="unexpectedDisconnect" from="ApiAccess" to="." method="_on_api_access_unexpected_disconnect"]
 
-[editable path="VBoxContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar"]
-[editable path="VBoxContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar"]
-[editable path="VBoxContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar"]
+[editable path="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar"]
+[editable path="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar"]
+[editable path="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar"]

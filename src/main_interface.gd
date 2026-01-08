@@ -2,6 +2,7 @@ extends HSplitContainer
 
 const chapterSceneUID = "uid://dvj16bw73cbsn"
 const generateButtonUID = "uid://bnr5ulamhqxp4"
+const imageButtonUID = "uid://bmste3d2d37tv"
 
 var model: String = ""
 var miscTools: Dictionary = {}
@@ -137,10 +138,15 @@ func llmParagraphGenerate(characterName: String):
 		dataPackage.erase("paragraphs")
 	if dataPackage["summary"].is_empty():
 		dataPackage.erase("summary")
+	var imageList: Array = []
+	for imageButt in %ImageBox.get_children():
+		imageList.append(imageButt.getImg())
+	if len(imageList) > 0:
+		instruction = "img_" + instruction
 	instruction += ":" + characterName
 	prompt = %LLMControl.generatePrompt(draft, dataPackage, instruction)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
-		"generate", prompt
+		"generate", prompt, imageList
 	)
 	var color: Color = Globals.narratorColor
 	if characterName in characters:
@@ -168,10 +174,15 @@ func llmParagraphExpand(paragrObject, text: String, characterName: String):
 			)
 	if paragrObject.get_index() > 0:
 		dataPackage["paragraphs"] = chapterNode.getParagraphs(paragrObject.get_index()-1)
+	var imageList: Array = []
+	for imageButt in %ImageBox.get_children():
+		imageList.append(imageButt.getImg())
+	if len(imageList) > 0:
+		instruction = "img_" + instruction
 	instruction += ":" + characterName
 	prompt = %LLMControl.generatePrompt(text, dataPackage, instruction)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
-		"generate", prompt
+		"generate", prompt, imageList
 	)
 	paragrObject.connectLlm(tunnel)
 
@@ -342,6 +353,38 @@ func _on_paragraphSummary(
 	paragraphList: Array, afterIndex: int, command: String, draft: bool = false
 ):
 	llmSummaryGenerate(paragraphList, afterIndex, command, draft)
+
+func _on_image_add_button_pressed():
+	%LoadImgDialog.show()
+
+func _on_image_file_selected(path: String):
+	var image: Image = Image.load_from_file(path)
+	var imgButtonScene: PackedScene = load(imageButtonUID)
+	var button = imgButtonScene.instantiate()
+	button.setTexture(image)
+	button.setNumber(%ImageBox.get_child_count()+1)
+	button.activated.connect(_on_image_button_activated)
+	%ImageBox.add_child(button)
+
+func _on_image_button_activated(buttonObj: Object):
+	var number: int = %ImageBox.get_children().find(buttonObj)
+	assert(number >= 0)
+	%ImageEdit.openMain({
+		"origImg": buttonObj.getOrigImg(),
+		"img": buttonObj.getImg(),
+		"num": number + 1
+	})
+
+func _on_image_delete_cmd(number: int):
+	number -= 1
+	var indexer: int = %ImageBox.get_child_count() - 1
+	while indexer > number:
+		%ImageBox.get_child(indexer).setNumber(indexer)
+		indexer -= 1
+	%ImageBox.remove_child(%ImageBox.get_child(number))
+
+func _on_image_edit_change_image(number: int, image: Image):
+	%ImageBox.get_child(number-1).setImage(image)
 
 func _on_llm_control_connection_severed():
 	for node in get_tree().get_nodes_in_group("llmButton"):

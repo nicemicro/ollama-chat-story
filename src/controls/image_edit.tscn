@@ -1,0 +1,141 @@
+[gd_scene load_steps=3 format=3 uid="uid://dc6187vyn6rkp"]
+
+[ext_resource type="PackedScene" uid="uid://bp7sy4fyjgjj1" path="res://controls/misc_block.tscn" id="1_eknqy"]
+[ext_resource type="Script" uid="uid://dso0ujn47o10i" path="res://controls/image_edit.gd" id="2_o87yy"]
+
+[node name="ImageEdit" instance=ExtResource("1_eknqy")]
+script = ExtResource("2_o87yy")
+
+[node name="Label" parent="VBoxContainer/HBoxContainer" index="0"]
+text = "Image editor"
+
+[node name="ImgNumLabel" type="Label" parent="VBoxContainer/ScrollContainer/Main" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "No image selected"
+
+[node name="EditButtons" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Main" index="1"]
+layout_mode = 2
+alignment = 1
+
+[node name="RLeft" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons" index="0" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "RLeft"
+
+[node name="RRight" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons" index="1" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "RRight"
+
+[node name="VMirror" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons" index="2" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "VMirr"
+
+[node name="HMirror" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons" index="3" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "HMirr"
+
+[node name="EditButtons2" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Main" index="2"]
+layout_mode = 2
+alignment = 1
+
+[node name="VReduce" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons2" index="0" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "VReduce"
+
+[node name="HReduce" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons2" index="1" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "HReduce"
+
+[node name="Reduce1" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons2" index="2" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "-20%"
+
+[node name="Reduce2" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons2" index="3" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "-50%"
+
+[node name="EditButtons3" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Main" index="3"]
+layout_mode = 2
+alignment = 1
+
+[node name="LCut" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons3" index="0" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "LCut"
+
+[node name="BtmCut" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons3" index="1" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "BtmCut"
+
+[node name="TopCut" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons3" index="2" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "TopCut"
+
+[node name="Rcut" type="Button" parent="VBoxContainer/ScrollContainer/Main/EditButtons3" index="3" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "RCut"
+
+[node name="ScrollUseImg" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main" index="4"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="UseImg" type="TextureRect" parent="VBoxContainer/ScrollContainer/Main/ScrollUseImg" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 2
+
+[node name="CopyButton" type="Button" parent="VBoxContainer/ScrollContainer/Main" index="5" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "Copy original"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/ScrollContainer/Main" index="6" groups=["ImgManip"]]
+layout_mode = 2
+disabled = true
+text = "Delete image"
+
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/Main" index="7"]
+layout_mode = 2
+text = "Original image from file"
+horizontal_alignment = 1
+
+[node name="ScrollOrigImg" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main" index="8"]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OrigImg" type="TextureRect" parent="VBoxContainer/ScrollContainer/Main/ScrollOrigImg" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 2
+
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons/RLeft" to="." method="_on_r_left_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons/RRight" to="." method="_on_r_right_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons/VMirror" to="." method="_on_v_mirror_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons/HMirror" to="." method="_on_h_mirror_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons2/VReduce" to="." method="_on_v_reduce_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons2/HReduce" to="." method="_on_h_reduce_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons2/Reduce1" to="." method="_on_reduce_1_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons2/Reduce2" to="." method="_on_reduce_2_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons3/LCut" to="." method="_on_l_cut_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons3/BtmCut" to="." method="_on_btm_cut_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons3/TopCut" to="." method="_on_top_cut_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/EditButtons3/Rcut" to="." method="_on_rcut_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/CopyButton" to="." method="_on_copy_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/ScrollContainer/Main/DeleteButton" to="." method="_on_delete_button_pressed"]

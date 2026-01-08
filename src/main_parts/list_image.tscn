@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://bmste3d2d37tv"]
+
+[ext_resource type="Script" uid="uid://ddiytkjjvk2bs" path="res://main_parts/list_image.gd" id="1_ymi0r"]
+
+[node name="ListImage" type="TextureButton"]
+custom_minimum_size = Vector2(50, 50)
+offset_right = 50.0
+offset_bottom = 50.0
+script = ExtResource("1_ymi0r")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

@@ -27,7 +27,9 @@ func _process(_delta):
 	if sendMessage["type"] == "chat":
 		_sendChatToOllama(sendMessage["message"], sendMessage["tunnel"])
 	elif sendMessage["type"] == "generate":
-		_sendGenerateToOllama(sendMessage["message"], sendMessage["tunnel"])
+		_sendGenerateToOllama(
+			sendMessage["message"], sendMessage["images"], sendMessage["tunnel"]
+		)
 	else:
 		assert (false)
 	sendMessage["tunnel"].connectApi(%ApiAccess)
@@ -67,7 +69,9 @@ func showModels(data: Dictionary):
 	%StatusLabel.text = "Connected. Select a model:"
 	llmConnected.emit()
 
-func addToOllamaQueue(msgType: String, message: String, llmTunnel: LlmTunnel = null):
+func addToOllamaQueue(
+	msgType: String, message: String, images: Array = [], llmTunnel: LlmTunnel = null 
+):
 	assert (msgType == "chat" or msgType == "generate")
 	if llmTunnel == null:
 		llmTunnel = LlmTunnel.new()
@@ -85,12 +89,21 @@ func addToOllamaQueue(msgType: String, message: String, llmTunnel: LlmTunnel = n
 	llmTunnel.messageReceived.connect(receiveMsgDispl.receiveLlmMessage)
 	llmTunnel.streamOver.connect(receiveMsgDispl.hideProgressBar)
 	%LLMResponses.add_child(receiveMsgDispl)
+	var encodedImgs: Array = []
+	for img in images:
+		#img.save_jpg("user://test.jpg", 0.98)
+		#var file = FileAccess.open("user://test.txt", FileAccess.WRITE)
+		#file.store_string(
+			#Marshalls.raw_to_base64(img.save_jpg_to_buffer(0.98))
+		#)
+		encodedImgs.append(Marshalls.raw_to_base64(img.save_jpg_to_buffer(0.98)))
 	_sendMsgQueue.append({
 		"id": _msgId,
 		"tunnel": llmTunnel,
 		"type": msgType,
 		"message": message,
-		"responseDispl": receiveMsgDispl
+		"responseDispl": receiveMsgDispl,
+		"images": encodedImgs
 	})
 	return llmTunnel
 
@@ -124,17 +137,19 @@ func _sendChatToOllama(message: String, tunnel: LlmTunnel):
 		}
 	, "api/chat")
 
-func _sendGenerateToOllama(message: String, tunnel: LlmTunnel):
+func _sendGenerateToOllama(message: String, images: Array, tunnel: LlmTunnel):
 	assert(len(_sendMsgQueue) > 0)
 	tunnel.messageReceived.connect(_messageFromOllama)
 	tunnel.streamOver.connect(_ollamaStreamDone)
 	call_deferred("scrollBottom")
-	%ApiAccess.sendPostRequest({
-			"model": %SelectModel.get_item_text(%SelectModel.selected),
-			"prompt": message,
-			"system": %PromptGen.systemPrompts.pick_random()
-		}
-	, "api/generate")
+	var dictSend: Dictionary = {
+		"model": %SelectModel.get_item_text(%SelectModel.selected),
+		"prompt": message,
+		"system": %PromptGen.systemPrompts.pick_random()
+	}
+	if len(images) > 0:
+		dictSend["images"] = images
+	%ApiAccess.sendPostRequest(dictSend, "api/generate")
 
 func _messageFromOllama(_a, _b, _c, _d, _e):
 	call_deferred("scrollBottom")

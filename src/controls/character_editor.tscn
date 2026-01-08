@@ -6,20 +6,20 @@
 [node name="CharacterEditor" instance=ExtResource("1_3ypwv")]
 script = ExtResource("2_5ck6n")
 
-[node name="ChapterSelect" type="OptionButton" parent="VBoxContainer/Main" index="0"]
+[node name="ChapterSelect" type="OptionButton" parent="VBoxContainer/ScrollContainer/Main" index="0"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="CharacterSelect" type="OptionButton" parent="VBoxContainer/Main" index="1"]
+[node name="CharacterSelect" type="OptionButton" parent="VBoxContainer/ScrollContainer/Main" index="1"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PrevChapter" type="Button" parent="VBoxContainer/Main" index="2"]
+[node name="PrevChapter" type="Button" parent="VBoxContainer/ScrollContainer/Main" index="2"]
 layout_mode = 2
 disabled = true
 text = "Copy from previous chapter"
 
-[node name="StoryEdit" type="TextEdit" parent="VBoxContainer/Main" index="3"]
+[node name="StoryEdit" type="TextEdit" parent="VBoxContainer/ScrollContainer/Main" index="3"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -27,17 +27,17 @@ placeholder_text = "Write your character description here"
 editable = false
 wrap_mode = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/Main" index="4"]
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/Main" index="4"]
 layout_mode = 2
 text = "Pick a color"
 
-[node name="ColorPick" type="ColorPickerButton" parent="VBoxContainer/Main" index="5"]
+[node name="ColorPick" type="ColorPickerButton" parent="VBoxContainer/ScrollContainer/Main" index="5"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Color"
 edit_alpha = false
 
-[node name="Continue" type="Button" parent="VBoxContainer/Main" index="6"]
+[node name="Continue" type="Button" parent="VBoxContainer/ScrollContainer/Main" index="6"]
 layout_mode = 2
 disabled = true
 text = "LLM-continue"
@@ -47,8 +47,8 @@ unique_name_in_owner = true
 wait_time = 3.0
 one_shot = true
 
-[connection signal="item_selected" from="VBoxContainer/Main/ChapterSelect" to="." method="_on_chapter_select_item_selected"]
-[connection signal="item_selected" from="VBoxContainer/Main/CharacterSelect" to="." method="_on_character_select_item_selected"]
-[connection signal="text_changed" from="VBoxContainer/Main/StoryEdit" to="." method="_on_text_edit_text_changed"]
-[connection signal="color_changed" from="VBoxContainer/Main/ColorPick" to="." method="_on_color_picker_button_color_changed"]
 [connection signal="timeout" from="Timer" to="." method="emitChanges"]
+[connection signal="item_selected" from="VBoxContainer/ScrollContainer/Main/ChapterSelect" to="." method="_on_chapter_select_item_selected"]
+[connection signal="item_selected" from="VBoxContainer/ScrollContainer/Main/CharacterSelect" to="." method="_on_character_select_item_selected"]
+[connection signal="text_changed" from="VBoxContainer/ScrollContainer/Main/StoryEdit" to="." method="_on_text_edit_text_changed"]
+[connection signal="color_changed" from="VBoxContainer/ScrollContainer/Main/ColorPick" to="." method="_on_color_picker_button_color_changed"]

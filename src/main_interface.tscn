@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cw0s0cjc5g3vs"]
+[gd_scene load_steps=9 format=3 uid="uid://cw0s0cjc5g3vs"]
 
 [ext_resource type="Script" uid="uid://buqpj43eend46" path="res://main_interface.gd" id="1_3wdv7"]
 [ext_resource type="Theme" uid="uid://cwdo01ubsxv0l" path="res://theme/theme.tres" id="1_v57av"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bd63yugebxlpt" path="res://controls/character_editor.tscn" id="4_p4uil"]
 [ext_resource type="PackedScene" uid="uid://bnr5ulamhqxp4" path="res://main_parts/generate_paragaph_butt.tscn" id="4_xxucj"]
 [ext_resource type="PackedScene" uid="uid://uu5r5a8j8gk" path="res://controls/placeholder.tscn" id="6_ckhiq"]
+[ext_resource type="PackedScene" uid="uid://dc6187vyn6rkp" path="res://controls/image_edit.tscn" id="7_a7kfw"]
 
 [node name="MainInterface" type="HSplitContainer"]
 anchors_preset = 15
@@ -45,7 +46,7 @@ wrap_mode = 1
 
 [node name="Chapters" type="TabContainer" parent="MainWindow/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 450)
+custom_minimum_size = Vector2(0, 550)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
@@ -121,13 +122,28 @@ text = "Use the above text"
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ContextEdit" type="TextEdit" parent="MainWindow/VBoxContainer"]
+[node name="ContextParts" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="ContextEdit" type="TextEdit" parent="MainWindow/VBoxContainer/ContextParts"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Additional context that the LLM should consider"
 wrap_mode = 1
+
+[node name="ImageBox" type="HBoxContainer" parent="MainWindow/VBoxContainer/ContextParts"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ImageAddButton" type="Button" parent="MainWindow/VBoxContainer/ContextParts"]
+layout_mode = 2
+tooltip_text = "Loaded image will be sent to the LLM (only has effect if the model is a vision-nanguage model)"
+text = "Load Image"
 
 [node name="AdditionalButtons" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
 layout_mode = 2
@@ -170,6 +186,10 @@ layout_mode = 2
 [node name="CharacterEditor" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_p4uil")]
 layout_mode = 2
 
+[node name="ImageEdit" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("7_a7kfw")]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="Placeholder" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("6_ckhiq")]
 layout_mode = 2
 
@@ -195,6 +215,17 @@ file_mode = 0
 access = 1
 filters = PackedStringArray("*.lc.json;LLM-chat JSON;text/json", "*json;JSON;text/json")
 
+[node name="LoadImgDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Open a File"
+initial_position = 1
+size = Vector2i(905, 600)
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png;PNG image;image/png", "*.jpg,*.jpeg;JPEG image;image/jpeg", "*.webp;WEBP image;image/webp")
+
 [node name="LlmNotConnDial" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 initial_position = 4
@@ -204,11 +235,16 @@ Try connecting through the side panels."
 [connection signal="text_changed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatInput" to="." method="_on_chat_input_text_changed"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm/ChatSend" to="." method="_on_chat_send_pressed"]
 [connection signal="buttonPressed" from="MainWindow/VBoxContainer/GenerateText/CharacterButtons/NarrationButton" to="." method="llmParagraphGenerate"]
+[connection signal="pressed" from="MainWindow/VBoxContainer/ContextParts/ImageAddButton" to="." method="_on_image_add_button_pressed"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/LoadButton" to="." method="_on_load_button_pressed"]
 [connection signal="pressed" from="MainWindow/VBoxContainer/AdditionalButtons/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="connectionSevered" from="Supplementary/VBoxContainer/MiscTools/LLMControl" to="." method="_on_llm_control_connection_severed"]
 [connection signal="llmConnected" from="Supplementary/VBoxContainer/MiscTools/LLMControl" to="." method="_on_llm_control_llm_connected"]
 [connection signal="characterChange" from="Supplementary/VBoxContainer/MiscTools/CharacterEditor" to="." method="_on_character_editor_character_change"]
 [connection signal="selectionChange" from="Supplementary/VBoxContainer/MiscTools/CharacterEditor" to="." method="_on_openCharacterStory"]
+[connection signal="changeImage" from="Supplementary/VBoxContainer/MiscTools/ImageEdit" to="." method="_on_image_edit_change_image"]
+[connection signal="deleteImage" from="Supplementary/VBoxContainer/MiscTools/ImageEdit" to="." method="_on_image_delete_cmd"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]
 [connection signal="file_selected" from="LoadDialog" to="." method="_on_load_dialog_file_selected"]
+[connection signal="confirmed" from="LoadImgDialog" to="." method="_on_load_img_dialog_confirmed"]
+[connection signal="file_selected" from="LoadImgDialog" to="." method="_on_image_file_selected"]
