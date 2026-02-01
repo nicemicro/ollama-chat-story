@@ -2,6 +2,7 @@ extends PanelContainer
 
 const paragraphSceneUID = "uid://dklx1tdfmq6cb"
 const characterNameSceneUID = "uid://xss4d30ho6ir"
+const MAXCHARS = 10000
 
 @export var chapterName: String = ""
 var _tunnels: Array = []
@@ -35,7 +36,7 @@ func getChapterTitle() -> String:
 func getChapterBackground() -> String:
 	return %ChapterBackground.text
 
-func getParagraphs(startIndex: int = -1, maxlength: int = 10000) -> Array:
+func getParagraphs(startIndex: int = -1, maxlength: int = MAXCHARS) -> Array:
 	var paragrList: Array = []
 	var parindex: int = startIndex
 	if startIndex == -1:
@@ -114,17 +115,26 @@ func _requestAutoSumSum():
 	var parindex: int = %StoryParagraphs.get_child_count()
 	var paragraphList: Array = []
 	var place = -1
-	while parindex > 0:
+	var length: int = 0
+	var lastS2: String = ""
+	var lastS2len: int = 0
+	while length + lastS2len < MAXCHARS and parindex > 0:
 		parindex -= 1
 		var paragraphNode = %StoryParagraphs.get_child(parindex)
 		if not paragraphNode.paragrCharacter.begins_with("SUMMARY"):
 			continue
 		if place == -1:
 			place = parindex
+			#This puts the SUMMARY^2 right before the last SUMMARY^1
+			continue
+		if paragraphNode.paragrCharacter == "SUMMARY^2":
+			lastS2 = paragraphNode.paragrText
+			lastS2len = len(paragraphNode.paragrText)
 			continue
 		paragraphList.push_front(paragraphNode.paragrText)
-		if paragraphNode.paragrCharacter == "SUMMARY^2":
-			break
+		length += len(paragraphNode.paragrText)
+	if len(lastS2) > 0:
+		paragraphList[0] = lastS2
 	if len(paragraphList) < 2:
 		return
 	summarizeSummaries.emit(paragraphList, place, "summary_summary")

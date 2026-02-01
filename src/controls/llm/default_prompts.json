@@ -326,18 +326,20 @@
 			the events described there in a single paragraph in plain text. The summary you make
 			should start with the word \"SUMMARY^1: \" in all caps, and a colon, contain all major
 			plot elements and character development moments in about two (2) to eight (8)
-			sentences. Consider, that tis summary will be used in the future to generate more
-			paragraphs for the story, so it should be written to be helpful for the author.
-			Your character limit is 1000 characters.",
+			sentences. Keep temporal order and cause-and-effect chains without making up new
+			information. Make the last sentence a short description of the current state of the
+			world and the characters. Your character limit is 1000 characters.",
 		],
 		"summary_summary": [
-			"Considering the summyary listed above, your job is to formulate a consice summary of
+			"Considering the plot listed above, your job is to formulate a consice summary of
 			the events described there in a single paragraph in plain text. The summary you make
 			should start with the word \"SUMMARY^2: \" in all caps, and a colon, contain all major
-			plot elements and character development moments in about two (2) to eight (8)
-			sentences. Consider, that tis summary will be used in the future to generate more
-			paragraphs for the story, so it should be written to be helpful for the author.
-			Your character limit is 1000 characters.",
+			plot elements and character development moments in about two (2) to ten (10)
+			sentences. Keep the temporal order of events and cause-and-effect clear in the summary.
+			The last sentence or sentences of the summary should describe the state of the world and
+			characters after the events summarized. Consider that this summary will be used in the
+			future as a guideline to the plot of the story, so it should be written to be helpful
+			for the author. Your character limit is 1500 characters.",
 		],
 		"ask_question": [
 			"Considering the paragraphs presented above, answer the following question in
