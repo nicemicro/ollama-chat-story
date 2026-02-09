@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cdk7vsj3oiiyr"]
+[gd_scene format=3 uid="uid://cdk7vsj3oiiyr"]
 
 [ext_resource type="PackedScene" uid="uid://bp7sy4fyjgjj1" path="res://controls/misc_block.tscn" id="1_fvols"]
 [ext_resource type="Script" uid="uid://bufprvc2ktdc4" path="res://controls/llm_control.gd" id="2_ah6jq"]
@@ -6,112 +6,112 @@
 [ext_resource type="PackedScene" uid="uid://4ddu1aktagwu" path="res://controls/llm/title_bar.tscn" id="3_o8np1"]
 [ext_resource type="PackedScene" uid="uid://3yxmem2cp1i" path="res://controls/llm/prompt_gen.tscn" id="4_yi1m5"]
 
-[node name="LLMControl" instance=ExtResource("1_fvols")]
+[node name="LLMControl" unique_id=1299984155 instance=ExtResource("1_fvols")]
 script = ExtResource("2_ah6jq")
 
 [node name="Label" parent="VBoxContainer/HBoxContainer" index="0"]
 text = "LLM Control"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main" index="0"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main" index="0" unique_id=33602041]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SubWindows" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer" index="0"]
+[node name="SubWindows" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer" index="0" unique_id=172128537]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Connections" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="0"]
+[node name="Connections" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="0" unique_id=702011382]
 layout_mode = 2
 
-[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="0" instance=ExtResource("3_o8np1")]
+[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="0" unique_id=1690226435 instance=ExtResource("3_o8np1")]
 layout_mode = 2
 
 [node name="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar/HBoxContainer" index="0"]
 text = "Connections"
 
-[node name="OllamaUrl" type="LineEdit" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="1"]
+[node name="OllamaUrl" type="LineEdit" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="1" unique_id=346266618]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "localhost:11434"
 
-[node name="ConnectButt" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="2"]
+[node name="ConnectButt" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="2" unique_id=1643624822]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Connect to Ollama"
 
-[node name="DisconnectButt" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="3"]
+[node name="DisconnectButt" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="3" unique_id=1739961321]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "Disconnect Ollama"
 
-[node name="StatusLabel" type="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="4"]
+[node name="StatusLabel" type="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="4" unique_id=2063418156]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Status: disconnected"
 
-[node name="SelectModel" type="OptionButton" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="5"]
+[node name="SelectModel" type="OptionButton" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="5" unique_id=2068628792]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PromptSetup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="1"]
+[node name="PromptSetup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="1" unique_id=569382181]
 layout_mode = 2
 
-[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="0" instance=ExtResource("3_o8np1")]
+[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="0" unique_id=1010980761 instance=ExtResource("3_o8np1")]
 layout_mode = 2
 
 [node name="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup/TitleBar/HBoxContainer" index="0"]
 text = "Prompt setup"
 
-[node name="PromptGen" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="1" instance=ExtResource("4_yi1m5")]
+[node name="PromptGen" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/PromptSetup" index="1" unique_id=2129351986 instance=ExtResource("4_yi1m5")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="DirectMsgSend" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="2"]
+[node name="DirectMsgSend" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="2" unique_id=139636971]
 layout_mode = 2
 
-[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="0" instance=ExtResource("3_o8np1")]
+[node name="TitleBar" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="0" unique_id=1103215678 instance=ExtResource("3_o8np1")]
 layout_mode = 2
 
 [node name="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend/TitleBar/HBoxContainer" index="0"]
 text = "Send direct message"
 
-[node name="DirectMsgText" type="TextEdit" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="1"]
+[node name="DirectMsgText" type="TextEdit" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="1" unique_id=849244311]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_vertical = 3
 wrap_mode = 1
 
-[node name="DirectMsgSend" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="2"]
+[node name="DirectMsgSend" type="Button" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/DirectMsgSend" index="2" unique_id=475652820]
 layout_mode = 2
 text = "Send to LLM"
 
-[node name="LLMResponseList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="3"]
+[node name="LLMResponseList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="3" unique_id=832340090]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="0"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="0" unique_id=1293834591]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="1"]
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="1" unique_id=228740876]
 layout_mode = 2
 text = "LLM responses"
 
-[node name="LLMScroll" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="2"]
+[node name="LLMScroll" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList" index="2" unique_id=2029336727]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LLMResponses" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList/LLMScroll" index="0"]
+[node name="LLMResponses" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/LLMResponseList/LLMScroll" index="0" unique_id=1096141016]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ApiAccess" parent="." index="1" instance=ExtResource("3_ah6jq")]
+[node name="ApiAccess" parent="." index="1" unique_id=960212903 instance=ExtResource("3_ah6jq")]
 unique_name_in_owner = true
 
 [connection signal="hidePressed" from="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections/TitleBar" to="." method="_on_title_bar_hide_pressed"]

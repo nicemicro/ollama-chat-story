@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dvj16bw73cbsn"]
+[gd_scene format=3 uid="uid://dvj16bw73cbsn"]
 
 [ext_resource type="Script" uid="uid://c1l4ucdiwgv3j" path="res://chapter/chapter.gd" id="1_px6qp"]
 
-[node name="Chapter" type="PanelContainer"]
+[node name="Chapter" type="PanelContainer" unique_id=1953924956]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,20 +11,20 @@ grow_vertical = 2
 script = ExtResource("1_px6qp")
 metadata/_tab_index = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=1372528392]
 layout_mode = 2
 
-[node name="List" type="VBoxContainer" parent="ScrollContainer"]
+[node name="List" type="VBoxContainer" parent="ScrollContainer" unique_id=1498841549]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ChapterTitle" type="LineEdit" parent="ScrollContainer/List"]
+[node name="ChapterTitle" type="LineEdit" parent="ScrollContainer/List" unique_id=1347818051]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Title of the chapter (optional)"
 
-[node name="ChapterBackground" type="TextEdit" parent="ScrollContainer/List"]
+[node name="ChapterBackground" type="TextEdit" parent="ScrollContainer/List" unique_id=2113353999]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
@@ -32,81 +32,81 @@ size_flags_vertical = 3
 placeholder_text = "Background on what happened before the start of the chapter"
 wrap_mode = 1
 
-[node name="Characters" type="HFlowContainer" parent="ScrollContainer/List"]
+[node name="Characters" type="HFlowContainer" parent="ScrollContainer/List" unique_id=2085471804]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.2
 
-[node name="ShowAllButton" type="CheckButton" parent="ScrollContainer/List/Characters"]
+[node name="ShowAllButton" type="CheckButton" parent="ScrollContainer/List/Characters" unique_id=2016561983]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Show all"
 
-[node name="ScrollStory" type="ScrollContainer" parent="ScrollContainer/List"]
+[node name="ScrollStory" type="ScrollContainer" parent="ScrollContainer/List" unique_id=721876840]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.5
 
-[node name="StoryParagraphs" type="VBoxContainer" parent="ScrollContainer/List/ScrollStory"]
+[node name="StoryParagraphs" type="VBoxContainer" parent="ScrollContainer/List/ScrollStory" unique_id=1255712527]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ParagraphOptions" type="HFlowContainer" parent="ScrollContainer/List"]
+[node name="ParagraphOptions" type="HFlowContainer" parent="ScrollContainer/List" unique_id=1974574163]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="SelectedNumber" type="Label" parent="ScrollContainer/List/ParagraphOptions"]
+[node name="SelectedNumber" type="Label" parent="ScrollContainer/List/ParagraphOptions" unique_id=2019997844]
 unique_name_in_owner = true
 layout_mode = 2
 text = " 0 "
 horizontal_alignment = 1
 
-[node name="SelectBetween" type="Button" parent="ScrollContainer/List/ParagraphOptions"]
+[node name="SelectBetween" type="Button" parent="ScrollContainer/List/ParagraphOptions" unique_id=1987244933]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Select between"
 
-[node name="DeselectAll" type="Button" parent="ScrollContainer/List/ParagraphOptions"]
+[node name="DeselectAll" type="Button" parent="ScrollContainer/List/ParagraphOptions" unique_id=802064722]
 layout_mode = 2
 text = "Deselect all"
 
-[node name="DeleteParagraph" type="Button" parent="ScrollContainer/List/ParagraphOptions"]
+[node name="DeleteParagraph" type="Button" parent="ScrollContainer/List/ParagraphOptions" unique_id=1029454487]
 layout_mode = 2
 text = "Delete"
 
-[node name="DeleteConfirm" type="ConfirmationDialog" parent="ScrollContainer/List/ParagraphOptions/DeleteParagraph"]
+[node name="DeleteConfirm" type="ConfirmationDialog" parent="ScrollContainer/List/ParagraphOptions/DeleteParagraph" unique_id=1295889785]
 unique_name_in_owner = true
 title = "Please Confirm Deletion..."
 initial_position = 4
 ok_button_text = "Delete"
 dialog_text = "You will be deleting the selected paragraphs from the story. There is no undo button in this software."
 
-[node name="SummarizeParagraphs" type="Button" parent="ScrollContainer/List/ParagraphOptions" groups=["llmButton"]]
+[node name="SummarizeParagraphs" type="Button" parent="ScrollContainer/List/ParagraphOptions" unique_id=117119115 groups=["llmButton"]]
 layout_mode = 2
 disabled = true
 text = "Summarize"
 
-[node name="LlmQuestion" type="Button" parent="ScrollContainer/List/ParagraphOptions" groups=["llmButton"]]
+[node name="LlmQuestion" type="Button" parent="ScrollContainer/List/ParagraphOptions" unique_id=1970403015 groups=["llmButton"]]
 layout_mode = 2
 disabled = true
 text = "Ask a question"
 
-[node name="LllmQuestionInfo" type="ConfirmationDialog" parent="ScrollContainer/List/ParagraphOptions/LlmQuestion"]
+[node name="LllmQuestionInfo" type="ConfirmationDialog" parent="ScrollContainer/List/ParagraphOptions/LlmQuestion" unique_id=826833737]
 unique_name_in_owner = true
 initial_position = 4
 size = Vector2i(300, 236)
 dialog_text = "You can write the question you ask in the dialogue text box, and the answer will show up as a new paragraph, that you will be able to edit to copy parts of, or delete."
 dialog_autowrap = true
 
-[node name="DeleteCharacterNo" type="AcceptDialog" parent="."]
+[node name="DeleteCharacterNo" type="AcceptDialog" parent="." unique_id=437204136]
 unique_name_in_owner = true
 initial_position = 4
 dialog_text = "You can't delete a character with paragraphs

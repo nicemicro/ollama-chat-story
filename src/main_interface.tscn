@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cw0s0cjc5g3vs"]
+[gd_scene format=3 uid="uid://cw0s0cjc5g3vs"]
 
 [ext_resource type="Script" uid="uid://buqpj43eend46" path="res://main_interface.gd" id="1_3wdv7"]
 [ext_resource type="Theme" uid="uid://cwdo01ubsxv0l" path="res://theme/theme.tres" id="1_v57av"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://uu5r5a8j8gk" path="res://controls/placeholder.tscn" id="6_ckhiq"]
 [ext_resource type="PackedScene" uid="uid://dc6187vyn6rkp" path="res://controls/image_edit.tscn" id="7_a7kfw"]
 
-[node name="MainInterface" type="HSplitContainer"]
+[node name="MainInterface" type="HSplitContainer" unique_id=616458816]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,22 +20,22 @@ size_flags_vertical = 3
 theme = ExtResource("1_v57av")
 script = ExtResource("1_3wdv7")
 
-[node name="MainWindow" type="ScrollContainer" parent="."]
+[node name="MainWindow" type="ScrollContainer" parent="." unique_id=36358882]
 custom_minimum_size = Vector2(650, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainWindow"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainWindow" unique_id=23678246]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TitleEdit" type="LineEdit" parent="MainWindow/VBoxContainer"]
+[node name="TitleEdit" type="LineEdit" parent="MainWindow/VBoxContainer" unique_id=2059607626]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Title of the story (optional)"
 
-[node name="ScenarioEdit" type="TextEdit" parent="MainWindow/VBoxContainer"]
+[node name="ScenarioEdit" type="TextEdit" parent="MainWindow/VBoxContainer" unique_id=176402901]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
@@ -44,7 +44,7 @@ tooltip_text = "The base scenario (keep it short)"
 placeholder_text = "Base background for the story / scenario"
 wrap_mode = 1
 
-[node name="Chapters" type="TabContainer" parent="MainWindow/VBoxContainer"]
+[node name="Chapters" type="TabContainer" parent="MainWindow/VBoxContainer" unique_id=93133945]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 550)
 layout_mode = 2
@@ -52,15 +52,15 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 current_tab = 0
 
-[node name="Ch_1" parent="MainWindow/VBoxContainer/Chapters" instance=ExtResource("3_rhs15")]
+[node name="Ch_1" parent="MainWindow/VBoxContainer/Chapters" unique_id=467865068 instance=ExtResource("3_rhs15")]
 layout_mode = 2
 chapterName = "Ch 1"
 
-[node name="ChatInputSpace" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+[node name="ChatInputSpace" type="HBoxContainer" parent="MainWindow/VBoxContainer" unique_id=1950923150]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ChatInput" type="TextEdit" parent="MainWindow/VBoxContainer/ChatInputSpace"]
+[node name="ChatInput" type="TextEdit" parent="MainWindow/VBoxContainer/ChatInputSpace" unique_id=948047528]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
@@ -68,32 +68,32 @@ size_flags_horizontal = 3
 placeholder_text = "Type in the next paragraph, or instructuions for generating the next paragraph"
 wrap_mode = 1
 
-[node name="ChatConfirm" type="VBoxContainer" parent="MainWindow/VBoxContainer/ChatInputSpace"]
+[node name="ChatConfirm" type="VBoxContainer" parent="MainWindow/VBoxContainer/ChatInputSpace" unique_id=1054798983]
 layout_mode = 2
 
-[node name="ChatWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+[node name="ChatWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm" unique_id=270501779]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 1
 popup/item_0/text = "Narration"
 popup/item_0/id = 0
 
-[node name="ChatSend" type="Button" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+[node name="ChatSend" type="Button" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm" unique_id=104635732]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Send the text in the texbox directly without modification"
 text = "Send"
 
-[node name="NoCharacterSel" type="AcceptDialog" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+[node name="NoCharacterSel" type="AcceptDialog" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm" unique_id=1063633498]
 unique_name_in_owner = true
 initial_position = 4
 dialog_text = "Select a character first."
 
-[node name="Label" type="Label" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+[node name="Label" type="Label" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm" unique_id=491365478]
 layout_mode = 2
 text = "Auto reply"
 
-[node name="AutoReplyWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm"]
+[node name="AutoReplyWho" type="OptionButton" parent="MainWindow/VBoxContainer/ChatInputSpace/ChatConfirm" unique_id=1650707254]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
@@ -101,33 +101,33 @@ item_count = 1
 popup/item_0/text = "No reply"
 popup/item_0/id = 0
 
-[node name="GenerateText" type="ScrollContainer" parent="MainWindow/VBoxContainer"]
+[node name="GenerateText" type="ScrollContainer" parent="MainWindow/VBoxContainer" unique_id=175603804]
 layout_mode = 2
 size_flags_horizontal = 3
 vertical_scroll_mode = 0
 
-[node name="CharacterButtons" type="HFlowContainer" parent="MainWindow/VBoxContainer/GenerateText"]
+[node name="CharacterButtons" type="HFlowContainer" parent="MainWindow/VBoxContainer/GenerateText" unique_id=1166217741]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="GenerateByText" type="CheckButton" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons"]
+[node name="GenerateByText" type="CheckButton" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons" unique_id=543104716]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Use the above text"
 
-[node name="NarrationButton" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons" groups=["llmButton"] instance=ExtResource("4_xxucj")]
+[node name="NarrationButton" parent="MainWindow/VBoxContainer/GenerateText/CharacterButtons" unique_id=822284984 groups=["llmButton"] instance=ExtResource("4_xxucj")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ContextParts" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+[node name="ContextParts" type="HBoxContainer" parent="MainWindow/VBoxContainer" unique_id=1977681559]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.75
 
-[node name="ContextEdit" type="TextEdit" parent="MainWindow/VBoxContainer/ContextParts"]
+[node name="ContextEdit" type="TextEdit" parent="MainWindow/VBoxContainer/ContextParts" unique_id=636279438]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
@@ -136,64 +136,64 @@ size_flags_vertical = 3
 placeholder_text = "Additional context that the LLM should consider"
 wrap_mode = 1
 
-[node name="ImageBox" type="HBoxContainer" parent="MainWindow/VBoxContainer/ContextParts"]
+[node name="ImageBox" type="HBoxContainer" parent="MainWindow/VBoxContainer/ContextParts" unique_id=516793284]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ImageAddButton" type="Button" parent="MainWindow/VBoxContainer/ContextParts"]
+[node name="ImageAddButton" type="Button" parent="MainWindow/VBoxContainer/ContextParts" unique_id=1959835830]
 layout_mode = 2
 tooltip_text = "Loaded image will be sent to the LLM (only has effect if the model is a vision-nanguage model)"
 text = "Load Image"
 
-[node name="AdditionalButtons" type="HBoxContainer" parent="MainWindow/VBoxContainer"]
+[node name="AdditionalButtons" type="HBoxContainer" parent="MainWindow/VBoxContainer" unique_id=1311347928]
 layout_mode = 2
 
-[node name="LoadButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
+[node name="LoadButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons" unique_id=239486851]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Load scenario"
 
-[node name="SaveButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons"]
+[node name="SaveButton" type="Button" parent="MainWindow/VBoxContainer/AdditionalButtons" unique_id=178956375]
 layout_mode = 2
 text = "Save scenario"
 
-[node name="Supplementary" type="ScrollContainer" parent="."]
+[node name="Supplementary" type="ScrollContainer" parent="." unique_id=282300158]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Supplementary"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Supplementary" unique_id=464887137]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Supplementary/VBoxContainer"]
+[node name="Label" type="Label" parent="Supplementary/VBoxContainer" unique_id=101383815]
 layout_mode = 2
 text = "Controls"
 horizontal_alignment = 1
 
-[node name="MiscTools" type="VBoxContainer" parent="Supplementary/VBoxContainer"]
+[node name="MiscTools" type="VBoxContainer" parent="Supplementary/VBoxContainer" unique_id=1427159175]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="LLMControl" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_6mpp1")]
+[node name="LLMControl" parent="Supplementary/VBoxContainer/MiscTools" unique_id=1110470938 instance=ExtResource("4_6mpp1")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="CharacterEditor" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("4_p4uil")]
+[node name="CharacterEditor" parent="Supplementary/VBoxContainer/MiscTools" unique_id=459370502 instance=ExtResource("4_p4uil")]
 layout_mode = 2
 
-[node name="ImageEdit" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("7_a7kfw")]
+[node name="ImageEdit" parent="Supplementary/VBoxContainer/MiscTools" unique_id=154343292 instance=ExtResource("7_a7kfw")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Placeholder" parent="Supplementary/VBoxContainer/MiscTools" instance=ExtResource("6_ckhiq")]
+[node name="Placeholder" parent="Supplementary/VBoxContainer/MiscTools" unique_id=1368536725 instance=ExtResource("6_ckhiq")]
 layout_mode = 2
 
-[node name="SaveDialog" type="FileDialog" parent="."]
+[node name="SaveDialog" type="FileDialog" parent="." unique_id=1143027781]
 unique_name_in_owner = true
 initial_position = 1
 size = Vector2i(680, 450)
@@ -202,7 +202,7 @@ dialog_hide_on_ok = true
 access = 1
 filters = PackedStringArray("*.lc.json;LLM-chat JSON;text/json", "*json;JSON;text/json")
 
-[node name="LoadDialog" type="FileDialog" parent="."]
+[node name="LoadDialog" type="FileDialog" parent="." unique_id=189990527]
 unique_name_in_owner = true
 auto_translate_mode = 1
 title = "Open a File"
@@ -215,7 +215,7 @@ file_mode = 0
 access = 1
 filters = PackedStringArray("*.lc.json;LLM-chat JSON;text/json", "*json;JSON;text/json")
 
-[node name="LoadImgDialog" type="FileDialog" parent="."]
+[node name="LoadImgDialog" type="FileDialog" parent="." unique_id=1009101084]
 unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Open a File"
@@ -226,7 +226,7 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.png;PNG image;image/png", "*.jpg,*.jpeg;JPEG image;image/jpeg", "*.webp;WEBP image;image/webp")
 
-[node name="LlmNotConnDial" type="AcceptDialog" parent="."]
+[node name="LlmNotConnDial" type="AcceptDialog" parent="." unique_id=2049964009]
 unique_name_in_owner = true
 initial_position = 4
 dialog_text = "Ollama is not available.

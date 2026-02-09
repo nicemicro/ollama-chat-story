@@ -7,6 +7,7 @@ var ollamaPort: int = 11434
 var _modelListTunnel: LlmTunnel = null
 var _sendMsgQueue: Array = []
 var _msgId: int = 0
+var _manualScrolled: bool = false
 
 signal llmConnected
 signal connectionSevered
@@ -15,6 +16,10 @@ func _ready():
 	super._ready()
 	%OllamaUrl.placeholder_text = ollamaHost + ":" + str(ollamaPort)
 	hideSubBlocks()
+	%LLMScroll.get_v_scroll_bar().scrolling.connect(_scrollbarUsed)
+
+func _scrollbarUsed():
+	_manualScrolled = true
 
 func _process(_delta):
 	if len(_sendMsgQueue) == 0 or %ApiAccess.isBusy():
@@ -130,6 +135,7 @@ func _sendChatToOllama(message: String, tunnel: LlmTunnel):
 	messageSend.append({"role": "user", "content": message})
 	tunnel.messageReceived.connect(_messageFromOllama)
 	tunnel.streamOver.connect(_ollamaStreamDone)
+	_manualScrolled = false
 	call_deferred("scrollBottom")
 	%ApiAccess.sendPostRequest({
 			"model": %SelectModel.get_item_text(%SelectModel.selected),
@@ -141,6 +147,7 @@ func _sendGenerateToOllama(message: String, images: Array, tunnel: LlmTunnel):
 	assert(len(_sendMsgQueue) > 0)
 	tunnel.messageReceived.connect(_messageFromOllama)
 	tunnel.streamOver.connect(_ollamaStreamDone)
+	_manualScrolled = false
 	call_deferred("scrollBottom")
 	var dictSend: Dictionary = {
 		"model": %SelectModel.get_item_text(%SelectModel.selected),
@@ -160,6 +167,8 @@ func _ollamaStreamDone():
 	_sendMsgQueue.pop_front()
 
 func scrollBottom():
+	if _manualScrolled:
+		return
 	%LLMScroll.set_deferred(
 		"scroll_vertical", %LLMScroll.get_v_scroll_bar().max_value
 	)

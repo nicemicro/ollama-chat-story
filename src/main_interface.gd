@@ -219,6 +219,8 @@ func llmSummaryGenerate(
 		dataPackage.erase("paragraphs")
 	if dataPackage["summary"].is_empty():
 		dataPackage.erase("summary")
+	else:
+		dataPackage["summary_2"] = dataPackage["summary"]
 	prompt = %LLMControl.generatePrompt(draft, dataPackage, command)
 	var tunnel: LlmTunnel = %LLMControl.addToOllamaQueue(
 		"generate", prompt

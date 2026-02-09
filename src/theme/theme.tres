@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cwdo01ubsxv0l"]
+[gd_resource type="Theme" format=3 uid="uid://cwdo01ubsxv0l"]
 
 [ext_resource type="FontFile" uid="uid://buwsmts0r1wo5" path="res://theme/LiberationSans-Bold.ttf" id="1_gco77"]
 [ext_resource type="FontFile" uid="uid://bt64uu2ih7ukl" path="res://theme/LiberationSans-BoldItalic.ttf" id="2_6l1ye"]

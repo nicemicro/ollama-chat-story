@@ -14,6 +14,9 @@
 		currently attached. If images are referenced for current context or drafts, those should
 		be about currently shown images, while images refferred to in previous paragraphs might
 		have been different pictures.\n
+		Do not repeat the instructions in the prompt, and do not explain yourself in your response.
+		Your response should only contain the result you are told to produce, do not give additional
+		explanation, just give the response.\n
 		Sentence and character limits are guidelines, you should abide by them but don't spend too
 		much time trying to fit things in exactly, mostly just go with an approximate value, erring
 		on the shorter side."
@@ -58,6 +61,13 @@
 		"summary": [
 			"To give you a sample of the earlier part of the story, what happened before the
 			current storyline is summarized here.\n
+			\"
+			%t\n%v
+			%t\n\"\n(End of summary)\n"
+		],
+		"summary_2": [
+			"To give you a sample of the unfinished the story, the events that happened before are
+			summazied in the following paragraphs.\n
 			\"
 			%t\n%v
 			%t\n\"\n(End of summary)\n"
@@ -331,15 +341,17 @@
 			world and the characters. Your character limit is 1000 characters.",
 		],
 		"summary_summary": [
-			"Considering the plot listed above, your job is to formulate a consice summary of
-			the events described there in a single paragraph in plain text. The summary you make
-			should start with the word \"SUMMARY^2: \" in all caps, and a colon, contain all major
-			plot elements and character development moments in about two (2) to ten (10)
-			sentences. Keep the temporal order of events and cause-and-effect clear in the summary.
-			The last sentence or sentences of the summary should describe the state of the world and
-			characters after the events summarized. Consider that this summary will be used in the
-			future as a guideline to the plot of the story, so it should be written to be helpful
-			for the author. Your character limit is 1500 characters.",
+			"Considering the unfinished plot listed above, your job is to formulate a consice
+			summary of the events described there in a single paragraph in plain text. The summary
+			you make should start with the word \"SUMMARY^2: \" in all caps, and a colon, contain
+			all major plot elements and character development moments in about seven (7) to ten (10)
+			sentences, about one sentence per paragraph listed. Keep the temporal order of events
+			and cause-and-effect clear in the summary. The last sentence or sentences of the summary
+			should describe the state of the world and characters after the events summarized.
+			Consider that this summary will be used in the future as a guideline to the plot of the
+			story, so it should be written to be helpful for the author. Only write your summary and
+			make sure the sentences follow each other without line breaks. Your character limit is
+			1500 characters.",
 		],
 		"ask_question": [
 			"Considering the paragraphs presented above, answer the following question in
@@ -384,7 +396,7 @@
 			"_start", "paragraphs_summaries"
 		],
 		"summary_summary": [
-			"_start", "summary"
+			"_start", "summary_2"
 		],
 		"ask_question": [
 			"_start", "paragraphs_summaries"

@@ -10,6 +10,7 @@ var _selectedParagrs: Array = []
 var _needToSummarize: int = -1
 var _unsummedSums: int = 0
 var _llmQuestionShown: bool = false
+var _manualScrolled: bool = false
 
 signal chapterTitleChange(chapterTitle, chapterObject)
 signal openCharacterStory(characterName, chapterName)
@@ -23,7 +24,15 @@ signal summarizeParagraphs(paragraphList: Array, insertAfter: int)
 signal summarizeSummaries(summaryList: Array, insertAfter: int)
 
 func _ready():
+	%ScrollStory.get_v_scroll_bar().scrolling.connect(_scrollbarUsed)
 	addEmptyCharacter()
+
+func _scrollbarUsed():
+	_manualScrolled = true
+	#_manualScrolled = (%ScrollStory.scroll_vertical != %ScrollStory.get_v_scroll_bar().max_value)
+	#this doesn't work as you can never get to the max value, as the max value is the bottom of the
+	#container while the actual scroll_vertical is the location of the top of the screen.
+	#think about it at an other time.
 
 func setProperties(newChapterName: String, newTitle: String, newBackground: String):
 	chapterName = newChapterName
@@ -85,8 +94,10 @@ func addOllamaPragr(tunnel: LlmTunnel, characterName: String, color: Color, wher
 	newParagraph.setUpLlm(tunnel, characterName, color, idealSize)
 	%StoryParagraphs.add_child(newParagraph)
 	if where == -1:
+		_manualScrolled = false
 		_scrollBottomDeferred()
 	else:
+		_manualScrolled = true
 		%StoryParagraphs.move_child(newParagraph, where)
 
 func _removeTunnel(activeTunnel: LlmTunnel):
@@ -176,6 +187,8 @@ func _connectParagrSignals(paragraph):
 	paragrapAdded.emit(paragraph)
 
 func scrollBottom():
+	if _manualScrolled:
+		return
 	%ScrollStory.set_deferred(
 		"scroll_vertical", %ScrollStory.get_v_scroll_bar().max_value
 	)
