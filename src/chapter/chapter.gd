@@ -28,11 +28,12 @@ func _ready():
 	addEmptyCharacter()
 
 func _scrollbarUsed():
-	_manualScrolled = true
-	#_manualScrolled = (%ScrollStory.scroll_vertical != %ScrollStory.get_v_scroll_bar().max_value)
-	#this doesn't work as you can never get to the max value, as the max value is the bottom of the
-	#container while the actual scroll_vertical is the location of the top of the screen.
-	#think about it at an other time.
+	#_manualScrolled = true
+	_manualScrolled = (
+		%ScrollStory.scroll_vertical < (
+			%ScrollStory.get_v_scroll_bar().max_value - %ScrollStory.size.y - 50
+		)
+	)
 
 func setProperties(newChapterName: String, newTitle: String, newBackground: String):
 	chapterName = newChapterName

@@ -19,7 +19,12 @@ func _ready():
 	%LLMScroll.get_v_scroll_bar().scrolling.connect(_scrollbarUsed)
 
 func _scrollbarUsed():
-	_manualScrolled = true
+	#_manualScrolled = true
+	_manualScrolled = (
+		%LLMScroll.scroll_vertical < (
+			%LLMScroll.get_v_scroll_bar().max_value - %LLMScroll.size.y - 50
+		)
+	)
 
 func _process(_delta):
 	if len(_sendMsgQueue) == 0 or %ApiAccess.isBusy():
