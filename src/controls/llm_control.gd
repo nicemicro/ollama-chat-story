@@ -144,7 +144,8 @@ func _sendChatToOllama(message: String, tunnel: LlmTunnel):
 	call_deferred("scrollBottom")
 	%ApiAccess.sendPostRequest({
 			"model": %SelectModel.get_item_text(%SelectModel.selected),
-			"messages": messageSend
+			"messages": messageSend,
+			"think": %ThinkButton.button_pressed
 		}
 	, "api/chat")
 
@@ -157,7 +158,8 @@ func _sendGenerateToOllama(message: String, images: Array, tunnel: LlmTunnel):
 	var dictSend: Dictionary = {
 		"model": %SelectModel.get_item_text(%SelectModel.selected),
 		"prompt": message,
-		"system": %PromptGen.systemPrompts.pick_random()
+		"system": %PromptGen.systemPrompts.pick_random(),
+		"think": %ThinkButton.button_pressed
 	}
 	if len(images) > 0:
 		dictSend["images"] = images

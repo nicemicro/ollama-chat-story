@@ -2,7 +2,7 @@ extends PanelContainer
 
 const paragraphSceneUID = "uid://dklx1tdfmq6cb"
 const characterNameSceneUID = "uid://xss4d30ho6ir"
-const MAXCHARS = 10000
+const MAXCHARS = 8000
 
 @export var chapterName: String = ""
 var _tunnels: Array = []

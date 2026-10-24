@@ -56,6 +56,11 @@ text = "Status: disconnected"
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="ThinkButton" type="CheckButton" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows/Connections" index="6" unique_id=621963100]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Thinking Mode"
+
 [node name="PromptSetup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Main/ScrollContainer/SubWindows" index="1" unique_id=569382181]
 layout_mode = 2
 
